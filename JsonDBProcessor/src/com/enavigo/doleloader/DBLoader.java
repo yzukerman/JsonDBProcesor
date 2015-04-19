@@ -14,6 +14,8 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.enavigo.doleloader.mapper.DoleSaladsCaProductMapper;
+import com.enavigo.doleloader.mapper.JsonMapper;
 import com.enavigo.doleloader.pojo.Product;
 
 public class DBLoader {
@@ -31,29 +33,39 @@ public class DBLoader {
 		try {
             // The newInstance() call is a work around for some
             // broken Java implementations
-			connection = DriverManager.getConnection("jdbc:mysql://localhost/doledb?" +
+			connection = DriverManager.getConnection("jdbc:mysql://localhost/dole_db?" +
 				                                   "user=root&password=ima711");
 			System.out.println("DB Connection established...");
 			
-			JsonNode tree = mapper.readTree(new File("/Users/yuvalzukerman/Development/dole-db-loader/dole-salads-ca-products.json"));
-			System.out.println(tree.size());
-			Iterator<String> fieldNames = tree.fieldNames();
-			while (fieldNames.hasNext())
-			{
-				System.out.println(fieldNames.next());
-			}
-			Iterator<JsonNode> iterator = tree.elements();
-			while(iterator.hasNext())
-			{
-				JsonNode currentNode = iterator.next();
-				System.out.println("Node size: " + currentNode.size());
-				Iterator<JsonNode> productIterator = currentNode.elements();
-				while(productIterator.hasNext())
-				{
-					JsonNode productNode = productIterator.next();
-					System.out.println(productNode.get("title"));
-				}
-			}
+			JsonNode tree = mapper.readTree(new File("/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/dolesalads.ca/dole-salads-ca-products.json"));
+//			Class c = Class.forName("com.enavigo.doleloader.mapper.DoleSaladsCaJsonMapper");
+//			JsonMapper jsonMapper = new DoleSaladsCaJsonMapper();
+//			jsonMapper = (JsonMapper) c.cast(jsonMapper);
+			
+			
+
+			JsonMapper jsonMapper;
+			jsonMapper =
+			  (JsonMapper) Class.forName("com.enavigo.doleloader.mapper.DoleSaladsCaProductMapper").newInstance();
+			jsonMapper.mapJson(tree);
+//			System.out.println(tree.size());
+//			Iterator<String> fieldNames = tree.fieldNames();
+//			while (fieldNames.hasNext())
+//			{
+//				System.out.println(fieldNames.next());
+//			}
+//			Iterator<JsonNode> iterator = tree.elements();
+//			while(iterator.hasNext())
+//			{
+//				JsonNode currentNode = iterator.next();
+//				System.out.println("Node size: " + currentNode.size());
+//				Iterator<JsonNode> productIterator = currentNode.elements();
+//				while(productIterator.hasNext())
+//				{
+//					JsonNode productNode = productIterator.next();
+//					System.out.println(productNode.get("title"));
+//				}
+//			}
 			
 			
         } catch (Exception ex) {
