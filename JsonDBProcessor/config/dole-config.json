@@ -1,0 +1,10 @@
+{
+	"tasks":
+		[
+			{
+				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/dolesalads.ca/dole-salads-ca-products.json",
+				"mapper":"com.enavigo.doleloader.mapper.DoleSaladsCaProductMapper",
+				"name": "Dole Salads Canada Products"
+			}
+		]
+}
