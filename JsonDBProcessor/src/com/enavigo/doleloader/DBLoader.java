@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.enavigo.doleloader.mapper.DoleSaladsCaProductMapper;
 import com.enavigo.doleloader.mapper.JsonMapper;
+import com.enavigo.doleloader.persistence.DoleJsonPersistor;
 import com.enavigo.doleloader.pojo.Product;
 
 public class DBLoader {
@@ -61,7 +62,12 @@ public class DBLoader {
 				jsonMapper =
 				  (JsonMapper) Class.forName(task.get("mapper")).newInstance();
 				System.out.println("Step: " + task.get("name"));
-				jsonMapper.mapJson(tree);
+				char siteCode = task.get("source-site").charAt(0);
+				Object mapResult = jsonMapper.mapJson(tree);
+				
+				DoleJsonPersistor jsonPersistor = 
+						(DoleJsonPersistor) Class.forName(task.get("persistor")).newInstance();
+				jsonPersistor.persist(connection, mapResult, siteCode);
 			}
 			
 			
@@ -109,6 +115,8 @@ public class DBLoader {
 				task.put("name", taskNode.get("name").asText());
 				task.put("source-file", taskNode.get("source-file").asText());
 				task.put("mapper", taskNode.get("mapper").asText());
+				task.put("source-site", taskNode.get("source-site").asText());
+				task.put("persistor", taskNode.get("persistor").asText());
 				tasks.add(task);
 			}
 			
