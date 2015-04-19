@@ -42,7 +42,7 @@ public class Product {
 	private int sugarsGrams = 0;
 	private int proteinGrams = 0;
 	private String ingredientsText = null;
-	private List<String> ingredients = null;
+	private String[] ingredients = null;
 	private String nutritionlabelHtml = null;
 	private List<HashMap<String, String>> relatedRecipes;
 	private List<HashMap<String, String>> relatedProducts;
@@ -246,10 +246,10 @@ public class Product {
 	public void setIngredientsText(String ingredientsText) {
 		this.ingredientsText = ingredientsText;
 	}
-	public List<String> getIngredients() {
+	public String[] getIngredients() {
 		return ingredients;
 	}
-	public void setIngredients(List<String> ingredients) {
+	public void setIngredients(String[] ingredients) {
 		this.ingredients = ingredients;
 	}
 	public String getNutritionlabelHtml() {
