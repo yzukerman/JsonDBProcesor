@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 import com.enavigo.doleloader.DoleLoaderConstants;
@@ -31,11 +32,14 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 		this.connection = connection;
 		// TODO Auto-generated method stub
 		List<Product> products = (List<Product>)objToPersist;
-		int nextProductId = getMaxProductId(connection) + 1;
+		int nextProductId = getMaxId(connection, "PRODUCT") + 1;
+		int nextRelatedRecipeId = getMaxId(connection, "product_related_recipe") + 1;
 		
 		for(Product p : products)
 		{
 			persistProduct(connection, p, nextProductId, sourceSite);
+			nextRelatedRecipeId = persistRelatedRecipe(connection, p.getRelatedRecipes(), nextProductId, 
+								nextRelatedRecipeId);
 			nextProductId++;
 		}
 			
@@ -46,12 +50,15 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 	/***
 	 * Returns the highest numbered ID in the products table
 	 * @param connection
+	 * @param tableName - the table we want to get the maximum ID for
 	 * @return the highest id used in the product table
 	 * @throws SQLException
 	 */
-	private int getMaxProductId(Connection connection) throws SQLException
+	private int getMaxId(Connection connection, String tableName) throws SQLException
 	{
-		PreparedStatement query = connection.prepareStatement(DoleLoaderConstants.PRODUCT_PERSIST_GET_MAX_ID);
+		String queryString = DoleLoaderConstants.PRODUCT_PERSIST_GET_MAX_ID + tableName;
+		PreparedStatement query = connection.prepareStatement(queryString);
+		
 		ResultSet rs = query.executeQuery();
 		System.out.println("Resultset size " + rs.getFetchSize());
 		int maxProductId = 0;
@@ -89,4 +96,41 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 		int result = query.executeUpdate();
 		System.out.println("Product Insert Result = " + result);
 	}
+	
+	/**
+	 * Associates related recipes with a product
+	 * @param connection Database connection
+	 * @param recipes List of recipes to associate
+	 * @param recipeId the next available id in the product related recipe table
+	 * @return the id to be used for the next recipe
+	 * @throws SQLException
+	 */
+	private int persistRelatedRecipe(Connection connection, 
+			List<HashMap<String, String>> recipes, int productId, int recipeId) throws SQLException
+	{
+		for (HashMap<String, String> recipe : recipes)
+		{
+			PreparedStatement query =  
+					connection.prepareStatement(DoleLoaderConstants.PRODUCT_RELATED_RECIPE_PERSIST_INSERT);
+			
+//			product_related_recipe_id,"
+//					+ "product_id, related_recipe_url, related_recipe_title, "
+//					+ "related_recipe_image_url
+			query.setInt(1, recipeId);
+			query.setInt(2, productId);
+			query.setString(3, recipe.get("url"));
+			query.setString(4, recipe.get("title"));
+			query.setString(5, recipe.get("image"));
+			
+			
+			int result = query.executeUpdate();
+			System.out.println("Product Related Recipe Insert Result = " + result);
+			recipeId++;
+		}
+		
+		return recipeId;
+		
+	}
+	
+	
 }
