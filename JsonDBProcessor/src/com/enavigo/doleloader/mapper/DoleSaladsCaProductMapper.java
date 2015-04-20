@@ -62,6 +62,7 @@ public class DoleSaladsCaProductMapper implements JsonMapper {
 		product.setIngredients(ingredientArray);
 		product.setNutritionlabelHtml(node.get("nutrition_info").asText());
 		product.setRelatedRecipes(getRelatedRecipes(node.get("related_recipes")));
+		product.setRelatedProducts(getRelatedProducts(node.get("related_products")));
 		return product;
 	}
 	
@@ -86,6 +87,29 @@ public class DoleSaladsCaProductMapper implements JsonMapper {
 			relatedRecipes.add(relatedRecipe);
 		}
 		return relatedRecipes;
+	}
+	
+	/***
+	 * Returns a collection containing the products related to the current product
+	 * @param node the JSON Node containing an array of related products
+	 * @return a collection containing the related products' information
+	 */
+	private List<HashMap<String, String>> getRelatedProducts(JsonNode node)
+	{
+		ArrayList<HashMap<String, String>> relatedProducts = 
+								new ArrayList<HashMap<String, String>>();
+		
+		Iterator<JsonNode> i = node.elements();
+		while (i.hasNext())
+		{
+			JsonNode relatedProductNode = i.next();
+			HashMap<String, String> relatedProduct = new HashMap<String, String>();
+			relatedProduct.put("image", relatedProductNode.get("image").asText());
+			relatedProduct.put("title", relatedProductNode.get("title").asText());
+			relatedProduct.put("url", relatedProductNode.get("url").asText());
+			relatedProducts.add(relatedProduct);
+		}
+		return relatedProducts;
 	}
 
 }
