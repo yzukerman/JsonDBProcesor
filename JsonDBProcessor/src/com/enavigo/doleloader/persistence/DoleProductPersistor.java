@@ -37,7 +37,8 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 									"product_related_recipe_id") + 1;
 		int nextIngredientId = getMaxId(connection, "product_ingredient", 
 									"product_ingredient_id") + 1;
-		System.out.println ("nextProductId = " + nextProductId + ", nextRelatedRecipeId = " + nextRelatedRecipeId);
+		int nextRelatedProductId = getMaxId(connection, "related_product", 
+				"rp_id") + 1;
 		for(Product p : products)
 		{
 			persistProduct(connection, p, nextProductId, sourceSite);
@@ -45,6 +46,8 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 								nextRelatedRecipeId);
 			nextIngredientId = persistIngredients(connection, p.getIngredients(), nextProductId, 
 								nextIngredientId);
+			nextRelatedProductId = persistRelatedProducts(connection, p.getRelatedProducts(), nextProductId, 
+					nextRelatedProductId);
 			nextProductId++;
 		}
 			
@@ -135,7 +138,15 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 		
 	}
 	
-	
+	/**
+	 * Stores the current product's ingredients in the database
+	 * @param connection the database connection
+	 * @param ingredients an array containing the product's ingredients
+	 * @param productId the id of the product the ingredients will be associated with
+	 * @param ingredientId the next available id for the ingredient table's primary key
+	 * @return the next available ingredient id
+	 * @throws SQLException
+	 */
 	private int persistIngredients(Connection connection, 
 			String[] ingredients, int productId, int ingredientId) throws SQLException
 	{
@@ -152,6 +163,42 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 		}
 		
 		return ingredientId;
+	}
+	
+	/**
+	 * Associates related recipes with a product
+	 * @param connection Database connection
+	 * @param recipes List of recipes to associate
+	 * @param recipeId the next available id in the product related recipe table
+	 * @return the id to be used for the next recipe
+	 * @throws SQLException
+	 */
+	private int persistRelatedProducts(Connection connection, 
+			List<HashMap<String, String>> recipes, int productId, int relatedProductId) throws SQLException
+	{
+		for (HashMap<String, String> recipe : recipes)
+		{
+			PreparedStatement query =  
+					connection.prepareStatement(DoleLoaderConstants.PRODUCT_RELATED_PRODUCT_INSERT);
+			
+//			rp_id,"
+//					+ "owner_product_id,"
+// 					+ "related_product_url,"
+//					+ "related_product_title,"
+//					+ "related_product_image
+			query.setInt(1, relatedProductId);
+			query.setInt(2, productId);
+			query.setString(3, recipe.get("url"));
+			query.setString(4, recipe.get("title"));
+			query.setString(5, recipe.get("image"));
+			
+			
+			int result = query.executeUpdate();
+			relatedProductId++;
+		}
+		
+		return relatedProductId;
+		
 	}
 	
 	
