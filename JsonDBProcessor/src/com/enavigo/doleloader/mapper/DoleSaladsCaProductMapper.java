@@ -22,17 +22,17 @@ public class DoleSaladsCaProductMapper implements JsonMapper {
 		
 		System.out.println("In mapJson");
 		
-		System.out.println(tree.size());
-		Iterator<String> fieldNames = tree.fieldNames();
-		while (fieldNames.hasNext())
-		{
-			System.out.println(fieldNames.next());
-		}
+//		System.out.println(tree.size());
+//		Iterator<String> fieldNames = tree.fieldNames();
+//		while (fieldNames.hasNext())
+//		{
+//			System.out.println(fieldNames.next());
+//		}
 		Iterator<JsonNode> iterator = tree.elements();
 		while(iterator.hasNext())
 		{
 			JsonNode currentNode = iterator.next();
-			System.out.println("Node size: " + currentNode.size());
+			//System.out.println("Node size: " + currentNode.size());
 			Iterator<JsonNode> productIterator = currentNode.elements();
 			while(productIterator.hasNext())
 			{
@@ -55,12 +55,14 @@ public class DoleSaladsCaProductMapper implements JsonMapper {
 		Product product = new Product();
 		product.setTitle(node.get("title").asText());
 		product.setUrl(node.get("page_url").asText());
-		product.setImageUrl(node.get("product_image").asText());
+		if(node.has("product_image"))
+			product.setImageUrl(node.get("product_image").asText());
 		product.setDescription(node.get("description").asText());
 		String ingredients = node.get("ingredients").asText();
 		String[] ingredientArray = ingredients.split(",");
 		product.setIngredients(ingredientArray);
-		product.setNutritionlabelHtml(node.get("nutrition_info").asText());
+		if(node.has("nutrition_info"))
+			product.setNutritionlabelHtml(node.get("nutrition_info").asText());
 		product.setRelatedRecipes(getRelatedRecipes(node.get("related_recipes")));
 		product.setRelatedProducts(getRelatedProducts(node.get("related_products")));
 		return product;
