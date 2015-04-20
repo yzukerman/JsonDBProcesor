@@ -34,13 +34,17 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 		List<Product> products = (List<Product>)objToPersist;
 		int nextProductId = getMaxId(connection, "PRODUCT", "product_id") + 1;
 		int nextRelatedRecipeId = getMaxId(connection, "product_related_recipe", 
-				"product_related_recipe_id") + 1;
+									"product_related_recipe_id") + 1;
+		int nextIngredientId = getMaxId(connection, "product_ingredient", 
+									"product_ingredient_id") + 1;
 		System.out.println ("nextProductId = " + nextProductId + ", nextRelatedRecipeId = " + nextRelatedRecipeId);
 		for(Product p : products)
 		{
 			persistProduct(connection, p, nextProductId, sourceSite);
 			nextRelatedRecipeId = persistRelatedRecipe(connection, p.getRelatedRecipes(), nextProductId, 
 								nextRelatedRecipeId);
+			nextIngredientId = persistIngredients(connection, p.getIngredients(), nextProductId, 
+								nextIngredientId);
 			nextProductId++;
 		}
 			
@@ -61,7 +65,7 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 		String queryString = "SELECT MAX(" + idColumn + ") AS max_id FROM " + tableName;
 		PreparedStatement query = connection.prepareStatement(queryString);
 		ResultSet rs = query.executeQuery();
-		System.out.println("Resultset size " + rs.getFetchSize());
+
 		int maxProductId = 0;
 		while(rs.next())
 		{
@@ -129,6 +133,25 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 		
 		return recipeId;
 		
+	}
+	
+	
+	private int persistIngredients(Connection connection, 
+			String[] ingredients, int productId, int ingredientId) throws SQLException
+	{
+		
+		for(String ingredient : ingredients)
+		{
+			PreparedStatement query = 
+					connection.prepareStatement(DoleLoaderConstants.PRODUCT_INGREDIENT_INSERT);
+			query.setInt(1, ingredientId);
+			query.setInt(2, productId);
+			query.setString(3, ingredient.trim());
+			query.executeUpdate();
+			ingredientId++;
+		}
+		
+		return ingredientId;
 	}
 	
 	
