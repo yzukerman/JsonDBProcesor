@@ -3,6 +3,7 @@ package com.enavigo.doleloader.persistence;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 import com.enavigo.doleloader.DoleLoaderConstants;
@@ -33,13 +34,22 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 		for(Recipe recipe : recipes)
 		{
 			persistRecipe(connection, recipe, nextRecipeId, sourceSite);
+			nextRelatedRecipeId = persistRelatedRecipe(connection, 
+					recipe.getRelatedRecipes(), nextRecipeId, nextRelatedRecipeId);
 			nextRecipeId++;
 		}
 		
 		return false;
 	}
 
-	
+	/***
+	 * Stores a recipe in the database
+	 * @param connection the database connection
+	 * @param r the recipe to store
+	 * @param recipeId the id to assign to the recipe in the database
+	 * @param sourceSite the site from which the recipe was extracted
+	 * @throws SQLException
+	 */
 	private void persistRecipe(Connection connection, Recipe r, 
 					int recipeId, char sourceSite) throws SQLException 
 	{
@@ -74,6 +84,40 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 		query.setString(18, r.getNutritionlabelHtml());
 		
 		int result = query.executeUpdate();
+	}
+	
+	/**
+	 * Associates related recipes with the current recipe
+	 * @param connection Database connection
+	 * @param recipes List of recipes to associate
+	 * @param recipeId The id of the recipe we want to associate the related recipes with; the current recipe
+	 * @param relatedRecipeId the next available id in the related recipe table
+	 * @return the id to be used for the next recipe
+	 * @throws SQLException
+	 */
+	private int persistRelatedRecipe(Connection connection, 
+			List<HashMap<String, String>> recipes, int recipeId, int relatedRecipeId) throws SQLException
+	{
+		if(recipes == null)
+			return relatedRecipeId;
+		
+		for (HashMap<String, String> recipe : recipes)
+		{
+			PreparedStatement query =  
+					connection.prepareStatement(DoleLoaderConstants.RECIPE_RELATED_RECIPE_INSERT);
+			
+			query.setInt(1, relatedRecipeId);
+			query.setInt(2, recipeId);
+			query.setString(3, recipe.get("url"));
+			query.setString(4, recipe.get("title"));
+			query.setString(5, recipe.get("image"));
+			
+			int result = query.executeUpdate();
+			relatedRecipeId++;
+		}
+		
+		return relatedRecipeId;
+		
 	}
 	
 }
