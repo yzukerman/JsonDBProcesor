@@ -61,13 +61,15 @@ public class DBLoader {
 				JsonMapper jsonMapper;
 				jsonMapper =
 				  (JsonMapper) Class.forName(task.get("mapper")).newInstance();
-				System.out.println("Step: " + task.get("name"));
+				System.out.println("Step: " + task.get("name") + "... ");
 				char siteCode = task.get("source-site").charAt(0);
 				Object mapResult = jsonMapper.mapJson(tree);
 				
 				DoleJsonPersistor jsonPersistor = 
 						(DoleJsonPersistor) Class.forName(task.get("persistor")).newInstance();
 				jsonPersistor.persist(connection, mapResult, siteCode);
+				
+				System.out.println("Step: " + task.get("name") + " DONE. ");
 			}
 			
 			
