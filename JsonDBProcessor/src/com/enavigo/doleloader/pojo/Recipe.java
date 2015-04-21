@@ -47,7 +47,7 @@ public class Recipe {
 	private List<HashMap<String, String>> ingredients = null;
 	private List<HashMap<String, String>> relatedProducts;
 	private List<HashMap<String, String>> relatedRecipes;
-	private List<HashMap<String, String>> recipeSteps;
+	private List<HashMap<String, Object>> recipeSteps;
 	private List<HashMap<String, String>> nutrients = null;
 	
 	public String getTitle() {
@@ -296,10 +296,10 @@ public class Recipe {
 	public void setRelatedRecipes(List<HashMap<String, String>> relatedRecipes) {
 		this.relatedRecipes = relatedRecipes;
 	}
-	public List<HashMap<String, String>> getRecipeSteps() {
+	public List<HashMap<String, Object>> getRecipeSteps() {
 		return recipeSteps;
 	}
-	public void setRecipeSteps(List<HashMap<String, String>> recipeSteps) {
+	public void setRecipeSteps(List<HashMap<String, Object>> recipeSteps) {
 		this.recipeSteps = recipeSteps;
 	}
 	public List<HashMap<String, String>> getNutrients() {
