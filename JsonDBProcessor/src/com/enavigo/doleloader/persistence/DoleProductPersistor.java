@@ -32,12 +32,12 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 		this.connection = connection;
 		// TODO Auto-generated method stub
 		List<Product> products = (List<Product>)objToPersist;
-		int nextProductId = getMaxId(connection, "PRODUCT", "product_id") + 1;
-		int nextRelatedRecipeId = getMaxId(connection, "product_related_recipe", 
+		int nextProductId = DoleJsonPersistenceUtils.getMaxId(connection, "PRODUCT", "product_id") + 1;
+		int nextRelatedRecipeId = DoleJsonPersistenceUtils.getMaxId(connection, "product_related_recipe", 
 									"product_related_recipe_id") + 1;
-		int nextIngredientId = getMaxId(connection, "product_ingredient", 
+		int nextIngredientId = DoleJsonPersistenceUtils.getMaxId(connection, "product_ingredient", 
 									"product_ingredient_id") + 1;
-		int nextRelatedProductId = getMaxId(connection, "related_product", 
+		int nextRelatedProductId = DoleJsonPersistenceUtils.getMaxId(connection, "related_product", 
 				"rp_id") + 1;
 		for(Product p : products)
 		{
@@ -53,29 +53,6 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 			
 		
 		return false;
-	}
-	
-	/***
-	 * Returns the highest numbered ID in the products table
-	 * @param connection
-	 * @param tableName - the table we want to get the maximum ID for
-	 * @param idColumn - the column name containing the table's primary key
-	 * @return the highest id used in the product table
-	 * @throws SQLException
-	 */
-	private int getMaxId(Connection connection, String tableName, String idColumn) throws SQLException
-	{
-		String queryString = "SELECT MAX(" + idColumn + ") AS max_id FROM " + tableName;
-		PreparedStatement query = connection.prepareStatement(queryString);
-		ResultSet rs = query.executeQuery();
-
-		int maxProductId = 0;
-		while(rs.next())
-		{
-			maxProductId = rs.getInt("max_id");
-		}
-		
-		return maxProductId;
 	}
 	
 	
