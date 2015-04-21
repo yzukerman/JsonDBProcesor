@@ -2,11 +2,33 @@
 	"tasks":
 		[
 			{
-				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/dolesalads.ca/dole-salads-ca-products.json",
+				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/dolesalads.ca/dole-salads-ca-products-150420.json",
 				"mapper":"com.enavigo.doleloader.mapper.DoleSaladsCaProductMapper",
 				"name": "Dole Salads Canada Products",
 				"source-site": "c",
 				"persistor": "com.enavigo.doleloader.persistence.DoleProductPersistor"
+			},
+			{
+				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/dolesalads.ca/dole-salads-ca-products-fr-150420.json",
+				"mapper":"com.enavigo.doleloader.mapper.DoleSaladsCaProductMapper",
+				"name": "Dole Salads Canada French Products",
+				"source-site": "f",
+				"persistor": "com.enavigo.doleloader.persistence.DoleProductPersistor"
+			},
+			{
+				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/dolesalads.ca/dole-salads-ca-recipes.json",
+				"mapper":"com.enavigo.doleloader.mapper.DoleSaladsCaRecipeMapper",
+				"name": "Dole Salads Canada Recipes",
+				"source-site": "c",
+				"persistor": "com.enavigo.doleloader.persistence.DoleRecipePersistor"
+			},
+			{
+				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/dolesalads.ca/dole-salads-ca-recieps-fr.json",
+				"mapper":"com.enavigo.doleloader.mapper.DoleSaladsCaRecipeMapper",
+				"name": "Dole Salads Canada French Recipes",
+				"source-site": "f",
+				"persistor": "com.enavigo.doleloader.persistence.DoleRecipePersistor"
 			}
+			
 		]
 }
