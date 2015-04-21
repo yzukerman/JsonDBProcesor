@@ -43,6 +43,8 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 					recipe.getRelatedRecipes(), nextRecipeId, nextRelatedRecipeId);
 			recipeStepIds = persistRecipeSteps(connection, 
 					recipe.getRecipeSteps(), nextRecipeId, recipeStepIds);
+			nextRecipeIngredientId = persistIngredients(connection,
+					recipe.getIngredients(), nextRecipeId, nextRecipeIngredientId);
 			nextRecipeId++;
 		}
 		
@@ -81,7 +83,7 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 		query.setString(8, r.getPrepUnit());
 		query.setInt(9, r.getTotalTimeValue());
 		query.setString(10, r.getTotalTimeUnit());
-		query.setInt(11, r.getServings());
+		query.setString(11, r.getServingSize());
 		query.setInt(12, r.getCalories());
 		query.setString(13, r.getDescription());
 		query.setString(14, r.getDifficultyDescription());
@@ -184,6 +186,32 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 		recipeStepIds.put("recipeStepId", new Integer(stepId));
 		recipeStepIds.put("recipeIngredientStepId", new Integer(ingredientId));
 		return recipeStepIds;
+		
+	}
+	
+	
+	private int persistIngredients(Connection connection, 
+			List<HashMap<String, String>> ingredients, int recipeId, int ingredientId) throws SQLException
+	{
+		if(ingredients == null)
+			return ingredientId;
+		
+		for (HashMap<String, String> ingredient : ingredients)
+		{
+			PreparedStatement query =  
+					connection.prepareStatement(DoleLoaderConstants.RECIPE_INGREDIENT_INSERT);
+			
+			query.setInt(1, ingredientId);
+			query.setInt(2, recipeId);
+			query.setString(3, ingredient.get("recipeIngredientString"));
+			query.setString(4, ingredient.get("title"));
+			query.setString(5, ingredient.get("image"));
+			
+			int result = query.executeUpdate();
+			ingredientId++;
+		}
+		
+		return ingredientId;
 		
 	}
 	
