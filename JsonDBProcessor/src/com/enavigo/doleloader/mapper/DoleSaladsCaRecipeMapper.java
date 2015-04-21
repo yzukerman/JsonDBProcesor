@@ -129,17 +129,17 @@ public class DoleSaladsCaRecipeMapper implements JsonMapper {
 	 * @param node The node containing the collection of recipe steps
 	 * @return a collection of recipe steps in order
 	 */
-	private List<HashMap<String, String>> getRecipeSteps(JsonNode node)
+	private List<HashMap<String, Object>> getRecipeSteps(JsonNode node)
 	{
-		ArrayList<HashMap<String, String>> recipeSteps = 
-								new ArrayList<HashMap<String, String>>();
+		ArrayList<HashMap<String, Object>> recipeSteps = 
+								new ArrayList<HashMap<String, Object>>();
 		
 		Iterator<JsonNode> i = node.elements();
 		while (i.hasNext())
 		{
 			JsonNode recipeStepNode = i.next();
-			HashMap<String, String> recipeStep = new HashMap<String, String>();
-			recipeStep.put("stepDescription", recipeStepNode.get("direction").asText());
+			HashMap<String, Object> recipeStep = new HashMap<String, Object>();
+			recipeStep.put("description", recipeStepNode.get("direction").asText());
 			recipeSteps.add(recipeStep);
 		}
 		return recipeSteps;
