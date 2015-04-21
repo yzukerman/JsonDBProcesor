@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.enavigo.doleloader.DoleLoaderConstants;
 import com.enavigo.doleloader.pojo.Product;
@@ -31,11 +32,17 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 		int nextRelatedRecipeId = DoleJsonPersistenceUtils.getMaxId(connection, 
 				"related_recipe", "rr_id") + 1;
 		
+		Map<String, Integer> recipeStepIds = new HashMap<String, Integer>();
+		recipeStepIds.put("recipeStepId", new Integer(nextRecipeStepId));
+		recipeStepIds.put("recipeIngredientStepId", new Integer(nextRecipeStepIngredientId));
+		
 		for(Recipe recipe : recipes)
 		{
 			persistRecipe(connection, recipe, nextRecipeId, sourceSite);
 			nextRelatedRecipeId = persistRelatedRecipe(connection, 
 					recipe.getRelatedRecipes(), nextRecipeId, nextRelatedRecipeId);
+			recipeStepIds = persistRecipeSteps(connection, 
+					recipe.getRecipeSteps(), nextRecipeId, recipeStepIds);
 			nextRecipeId++;
 		}
 		
@@ -117,6 +124,66 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 		}
 		
 		return relatedRecipeId;
+		
+	}
+	
+	/***
+	 * Stores recipe preparation direction steps in the database, as well as the ingredients
+	 * associated with each step (if any were specified in the recipe)
+	 * @param connection the database connection
+	 * @param steps list containing step information and ingredients
+	 * @param recipeId the id of the recipe the steps are assocaited with
+	 * @param recipeStepIds a map containing the primary key id values to use for the next step and
+	 * ingredients
+	 * @return a new map containing the next recipe step and ingredient ids to use
+	 * @throws SQLException
+	 */
+	private Map<String, Integer> persistRecipeSteps(Connection connection, 
+			List<HashMap<String, Object>> steps, int recipeId, 
+			Map<String, Integer> recipeStepIds) throws SQLException
+	{
+		if(steps == null)
+			return recipeStepIds;
+		
+		int stepId = recipeStepIds.get("recipeStepId").intValue();
+		int ingredientId = recipeStepIds.get("recipeIngredientStepId").intValue();
+		
+		for (HashMap<String, Object> step : steps)
+		{
+			PreparedStatement query =  
+					connection.prepareStatement(DoleLoaderConstants.RECIPE_STEP_INSERT);
+			
+			query.setInt(1, stepId);
+			query.setInt(2, recipeId);
+			query.setString(3, (String)step.get("description"));
+			
+			query.executeUpdate();
+			
+			String[] stepIngredients = (String[])step.get("ingredients");
+			if(stepIngredients != null)
+			{
+				for(String ingredient : stepIngredients)
+				{
+					PreparedStatement ingredientQuery =  
+							connection.prepareStatement(
+									DoleLoaderConstants.RECIPE_STEP_INGREDIENT_INSERT);
+					ingredientQuery.setInt(1, ingredientId);
+					ingredientQuery.setInt(2, stepId);
+					ingredientQuery.setString(3, ingredient);
+					ingredientQuery.executeUpdate();
+					ingredientId++;
+					ingredientQuery.close();
+				}
+			}
+			
+			stepId++;
+			query.close();
+		}
+		
+		
+		recipeStepIds.put("recipeStepId", new Integer(stepId));
+		recipeStepIds.put("recipeIngredientStepId", new Integer(ingredientId));
+		return recipeStepIds;
 		
 	}
 	
