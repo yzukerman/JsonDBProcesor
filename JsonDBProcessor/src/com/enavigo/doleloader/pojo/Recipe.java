@@ -1,25 +1,26 @@
 package com.enavigo.doleloader.pojo;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-
-public class Product {
+public class Recipe {
 	private String title = null;
 	private String url = null;
 	private String category = null;
 	private String subcategory = null;
 	private char soureceSite; 
 	private String imageUrl = null;
-	private String stat1 = null;
-	private String stat2 = null;
-	private String stat3 = null;
+	// preparation information (e.g. 5 minutes)
+	private int prepValue = 0; // 5 (in 5 minutes)
+	private String prepUnit = null; // "minutes"
+	private int totalTimeValue = 0;
+	private String totalTimeUnit = null;
 	private String description = null;
+	private String difficultyDescription = null;
+	private int difficultyValue = 0;
+	private int servings = 0;
 	private String servingSize = null;
+	private int vegetableServings = 0;
 	private int servingsPerContainer = 0;
 	private int calories = 0;
 	private int caloriesFromFat = 0;
@@ -42,10 +43,11 @@ public class Product {
 	private int sugarsGrams = 0;
 	private int proteinGrams = 0;
 	private String ingredientsText = null;
-	private String[] ingredients = null;
 	private String nutritionlabelHtml = null;
-	private List<HashMap<String, String>> relatedRecipes;
+	private List<HashMap<String, String>> ingredients = null;
 	private List<HashMap<String, String>> relatedProducts;
+	private List<HashMap<String, String>> relatedRecipes;
+	private List<HashMap<String, String>> recipeSteps;
 	private List<HashMap<String, String>> nutrients = null;
 	
 	public String getTitle() {
@@ -84,23 +86,29 @@ public class Product {
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
 	}
-	public String getStat1() {
-		return stat1;
+	public int getPrepValue() {
+		return prepValue;
 	}
-	public void setStat1(String stat1) {
-		this.stat1 = stat1;
+	public void setPrepValue(int prepValue) {
+		this.prepValue = prepValue;
 	}
-	public String getStat2() {
-		return stat2;
+	public String getPrepUnit() {
+		return prepUnit;
 	}
-	public void setStat2(String stat2) {
-		this.stat2 = stat2;
+	public void setPrepUnit(String prepUnit) {
+		this.prepUnit = prepUnit;
 	}
-	public String getStat3() {
-		return stat3;
+	public int getTotalTimeValue() {
+		return totalTimeValue;
 	}
-	public void setStat3(String stat3) {
-		this.stat3 = stat3;
+	public void setTotalTimeValue(int totalTimeValue) {
+		this.totalTimeValue = totalTimeValue;
+	}
+	public String getTotalTimeUnit() {
+		return totalTimeUnit;
+	}
+	public void setTotalTimeUnit(String totalTimeUnit) {
+		this.totalTimeUnit = totalTimeUnit;
 	}
 	public String getDescription() {
 		return description;
@@ -108,11 +116,35 @@ public class Product {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	public String getDifficultyDescription() {
+		return difficultyDescription;
+	}
+	public void setDifficultyDescription(String difficultyDescription) {
+		this.difficultyDescription = difficultyDescription;
+	}
+	public int getDifficultyValue() {
+		return difficultyValue;
+	}
+	public void setDifficultyValue(int difficultyValue) {
+		this.difficultyValue = difficultyValue;
+	}
+	public int getServings() {
+		return servings;
+	}
+	public void setServings(int servings) {
+		this.servings = servings;
+	}
 	public String getServingSize() {
 		return servingSize;
 	}
 	public void setServingSize(String servingSize) {
 		this.servingSize = servingSize;
+	}
+	public int getVegetableServings() {
+		return vegetableServings;
+	}
+	public void setVegetableServings(int vegetableServings) {
+		this.vegetableServings = vegetableServings;
 	}
 	public int getServingsPerContainer() {
 		return servingsPerContainer;
@@ -246,17 +278,17 @@ public class Product {
 	public void setIngredientsText(String ingredientsText) {
 		this.ingredientsText = ingredientsText;
 	}
-	public String[] getIngredients() {
-		return ingredients;
-	}
-	public void setIngredients(String[] ingredients) {
-		this.ingredients = ingredients;
-	}
 	public String getNutritionlabelHtml() {
 		return nutritionlabelHtml;
 	}
 	public void setNutritionlabelHtml(String nutritionlabelHtml) {
 		this.nutritionlabelHtml = nutritionlabelHtml;
+	}
+	public List<HashMap<String, String>> getIngredients() {
+		return ingredients;
+	}
+	public void setIngredients(List<HashMap<String, String>> ingredients) {
+		this.ingredients = ingredients;
 	}
 	public List<HashMap<String, String>> getRelatedRecipes() {
 		return relatedRecipes;
@@ -264,19 +296,25 @@ public class Product {
 	public void setRelatedRecipes(List<HashMap<String, String>> relatedRecipes) {
 		this.relatedRecipes = relatedRecipes;
 	}
+	public List<HashMap<String, String>> getRecipeSteps() {
+		return recipeSteps;
+	}
+	public void setRecipeSteps(List<HashMap<String, String>> recipeSteps) {
+		this.recipeSteps = recipeSteps;
+	}
+	public List<HashMap<String, String>> getNutrients() {
+		return nutrients;
+	}
+	public void setNutrients(List<HashMap<String, String>> nutrients) {
+		this.nutrients = nutrients;
+	}
 	public List<HashMap<String, String>> getRelatedProducts() {
 		return relatedProducts;
 	}
 	public void setRelatedProducts(List<HashMap<String, String>> relatedProducts) {
 		this.relatedProducts = relatedProducts;
 	}
-	public List<HashMap<String, String>> getNutrients() {
-		return nutrients;
-	}
-	public void setNutrient(List<HashMap<String, String>> nutrients) {
-		this.nutrients = nutrients;
-	}
-		
+	
 	
 	
 	

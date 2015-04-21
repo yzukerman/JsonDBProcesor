@@ -32,4 +32,18 @@ public class DoleLoaderConstants {
 			+ "related_product_title,"
 			+ "related_product_image)"
 			+ "VALUES (?,?,?,?,?)";
+	
+	public static String RECIPE_INSERT_NO_NUTRITION = 
+			"INSERT INTO recipe"
+			+ "(recipe_id, source_site_id, title, url,"
+			+ "category, subcategory, "
+			+ "prep_value, prep_unit, total_time_value, total_time_unit,"
+			+ "servings, calories, description, difficulty_description,"
+			+ "difficulty_value, image_url, vegetable_servings, nutrition_facts_html)"
+			+ " VALUES ("
+			+ "?, ?, ?, ?, ?," +
+			"?, ?, ?, ?, ?," +
+			"?, ?, ?, ?, ?," +
+			"?, ?, ?)";
+	
 }
