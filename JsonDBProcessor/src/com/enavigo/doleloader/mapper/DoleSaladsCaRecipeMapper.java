@@ -35,14 +35,13 @@ public class DoleSaladsCaRecipeMapper implements JsonMapper {
 			
 				category = currentNode.get("parent_category").asText();
 				subCategory = currentNode.get("category").asText();
-				System.out.println("Category: " + category + ", sub-category: " + subCategory);
+
 				if(currentNode.has("recipes"))
 				{
 					Iterator<JsonNode> recipeIterator = currentNode.get("recipes").elements();
 					while(recipeIterator.hasNext())
 					{
 						JsonNode recipeNode = recipeIterator.next();
-						System.out.println(recipeNode.get("title"));
 						recipes.add(processJson(recipeNode, category, subCategory));
 					}
 				}
@@ -65,8 +64,13 @@ public class DoleSaladsCaRecipeMapper implements JsonMapper {
 		recipe.setCategory(category);
 		recipe.setSubcategory(subCategory);
 		recipe.setTotalTimeUnit("Minutes");
-		if(node.has("duration"))
-			recipe.setTotalTimeValue(new Integer(node.get("duration").asText().split(" ")[0]).intValue());
+		if(node.has("servings"))
+			recipe.setServingSize(node.get("servings").asText());
+		if(node.has("cooking_duration"))
+		{
+			//System.out.println(node.get("duration").asText());
+			recipe.setTotalTimeValue(new Integer(node.get("cooking_duration").asText().split(" ")[0]).intValue());
+		}
 		if(node.has("image"))
 			recipe.setImageUrl(node.get("image").asText());
 		if(node.has("subhead"))
@@ -160,9 +164,9 @@ public class DoleSaladsCaRecipeMapper implements JsonMapper {
 		{
 			JsonNode relatedRecipeNode = i.next();
 			HashMap<String, String> relatedRecipe = new HashMap<String, String>();
-			relatedRecipe.put("image", relatedRecipeNode.get("image").asText());
-			relatedRecipe.put("title", relatedRecipeNode.get("title").asText());
-			relatedRecipe.put("url", relatedRecipeNode.get("url").asText());
+			relatedRecipe.put("image", relatedRecipeNode.get("related_recipe_image").asText());
+			relatedRecipe.put("title", relatedRecipeNode.get("related_recipe_title").asText());
+			relatedRecipe.put("url", relatedRecipeNode.get("related_recipe_url").asText());
 			relatedRecipes.add(relatedRecipe);
 		}
 		return relatedRecipes;
