@@ -46,4 +46,28 @@ public class DoleLoaderConstants {
 			"?, ?, ?, ?, ?," +
 			"?, ?, ?)";
 	
+	public static String RECIPE_RELATED_RECIPE_INSERT = 
+			"INSERT INTO related_recipe (rr_id,"
+			+ "recipe_id, related_recipe_url, related_recipe_title, "
+			+ "related_recipe_image_url) VALUES "
+			+ "(?, ?, ?, ?, ?)";
+	
+	public static String RECIPE_STEP_INSERT = 
+			"INSERT INTO recipe_step (recipe_step_id,"
+			+ "recipe_id, step_description"
+			+ ") VALUES "
+			+ "(?, ?, ?)";
+	
+	public static String RECIPE_STEP_INGREDIENT_INSERT = 
+			"INSERT INTO recipe_step_ingredient (recipe_step_ingredient_id, recipe_step_id,"
+			+ "ingredient"
+			+ ") VALUES "
+			+ "(?, ?, ?)";
+	
+	public static String RECIPE_INGREDIENT_INSERT = 
+			"INSERT INTO recipe_ingredient (recipe_ingredient_id, recipe_recipe_id,"
+			+ "recipe_ingredient_string, recipe_ingredient_title, recipe_ingredient_quantity"
+			+ ") VALUES "
+			+ "(?, ?, ?, ?, ?)";
+	
 }
