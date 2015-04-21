@@ -43,9 +43,28 @@ public class Product {
 	private int proteinGrams = 0;
 	private String ingredientsText = null;
 	private String[] ingredients = null;
+	private String[] benefits = null;
 	private String nutritionlabelHtml = null;
 	private List<HashMap<String, String>> relatedRecipes;
 	private List<HashMap<String, String>> relatedProducts;
+	private List<HashMap<String, String>> relatedArticles;
+	
+	
+	public String[] getBenefits() {
+		return benefits;
+	}
+	public void setBenefits(String[] benefits) {
+		this.benefits = benefits;
+	}
+	public void setNutrients(List<HashMap<String, String>> nutrients) {
+		this.nutrients = nutrients;
+	}
+	public List<HashMap<String, String>> getRelatedArticles() {
+		return relatedArticles;
+	}
+	public void setRelatedArticles(List<HashMap<String, String>> relatedArticles) {
+		this.relatedArticles = relatedArticles;
+	}
 	private List<HashMap<String, String>> nutrients = null;
 	
 	public String getTitle() {

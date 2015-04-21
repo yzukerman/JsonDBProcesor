@@ -39,6 +39,10 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 									"product_ingredient_id") + 1;
 		int nextRelatedProductId = DoleJsonPersistenceUtils.getMaxId(connection, "related_product", 
 				"rp_id") + 1;
+		int nextProductBenefitId = DoleJsonPersistenceUtils.getMaxId(connection, "product_benefit", 
+				"product_benefit_id") + 1;
+		int nextRelatedArticleId = DoleJsonPersistenceUtils.getMaxId(connection, "product_related_article", 
+				"related_article_id") + 1;
 		for(Product p : products)
 		{
 			persistProduct(connection, p, nextProductId, sourceSite);
@@ -48,6 +52,10 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 								nextIngredientId);
 			nextRelatedProductId = persistRelatedProducts(connection, p.getRelatedProducts(), nextProductId, 
 					nextRelatedProductId);
+			nextRelatedArticleId = persistRelatedArticles(connection, p.getRelatedArticles(), nextProductId, 
+					nextRelatedArticleId);
+			nextProductBenefitId = persistBenefits(connection, p.getBenefits(), nextProductId, 
+					nextProductBenefitId);
 			nextProductId++;
 		}
 			
@@ -92,6 +100,9 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 	private int persistRelatedRecipe(Connection connection, 
 			List<HashMap<String, String>> recipes, int productId, int recipeId) throws SQLException
 	{
+		if(recipes == null)
+			return recipeId;
+		
 		for (HashMap<String, String> recipe : recipes)
 		{
 			PreparedStatement query =  
@@ -126,17 +137,20 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 	 */
 	private int persistIngredients(Connection connection, 
 			String[] ingredients, int productId, int ingredientId) throws SQLException
-	{
-		
-		for(String ingredient : ingredients)
+	{	
+		if (ingredients != null)
 		{
-			PreparedStatement query = 
-					connection.prepareStatement(DoleLoaderConstants.PRODUCT_INGREDIENT_INSERT);
-			query.setInt(1, ingredientId);
-			query.setInt(2, productId);
-			query.setString(3, ingredient.trim());
-			query.executeUpdate();
-			ingredientId++;
+			for(String ingredient : ingredients)
+			{
+				PreparedStatement query = 
+						connection.prepareStatement(DoleLoaderConstants.PRODUCT_INGREDIENT_INSERT);
+				query.setInt(1, ingredientId);
+				query.setInt(2, productId);
+				//System.out.println("Product Id: " + productId + " | Ingredient: " + ingredient.trim() );
+				query.setString(3, ingredient.trim());
+				query.executeUpdate();
+				ingredientId++;
+			}
 		}
 		
 		return ingredientId;
@@ -153,29 +167,88 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 	private int persistRelatedProducts(Connection connection, 
 			List<HashMap<String, String>> recipes, int productId, int relatedProductId) throws SQLException
 	{
-		for (HashMap<String, String> recipe : recipes)
+		if(recipes != null)
 		{
-			PreparedStatement query =  
-					connection.prepareStatement(DoleLoaderConstants.PRODUCT_RELATED_PRODUCT_INSERT);
-			
-//			rp_id,"
-//					+ "owner_product_id,"
-// 					+ "related_product_url,"
-//					+ "related_product_title,"
-//					+ "related_product_image
-			query.setInt(1, relatedProductId);
-			query.setInt(2, productId);
-			query.setString(3, recipe.get("url"));
-			query.setString(4, recipe.get("title"));
-			query.setString(5, recipe.get("image"));
-			
-			
-			int result = query.executeUpdate();
-			relatedProductId++;
+			for (HashMap<String, String> recipe : recipes)
+			{
+				PreparedStatement query =  
+						connection.prepareStatement(DoleLoaderConstants.PRODUCT_RELATED_PRODUCT_INSERT);
+				
+	//			rp_id,"
+	//					+ "owner_product_id,"
+	// 					+ "related_product_url,"
+	//					+ "related_product_title,"
+	//					+ "related_product_image
+				query.setInt(1, relatedProductId);
+				query.setInt(2, productId);
+				query.setString(3, recipe.get("url"));
+				query.setString(4, recipe.get("title"));
+				query.setString(5, recipe.get("image"));
+				
+				
+				int result = query.executeUpdate();
+				relatedProductId++;
+			}
 		}
 		
 		return relatedProductId;
 		
+	}
+	
+	/**
+	 * Associates related articles with a product
+	 * @param connection Database connection
+	 * @param recipes List of articles to associate
+	 * @param recipeId the next available id in the product related recipe table
+	 * @return the id to be used for the next article
+	 * @throws SQLException
+	 */
+	private int persistRelatedArticles(Connection connection, 
+			List<HashMap<String, String>> articles, int productId, int relatedArticleId) throws SQLException
+	{
+		if(articles != null)
+		{
+			
+			for (HashMap<String, String> article : articles)
+			{
+				PreparedStatement query =  
+						connection.prepareStatement(DoleLoaderConstants.PRODUCT_RELATED_ARTICLE_INSERT);
+				
+				query.setInt(1, relatedArticleId);
+				query.setInt(2, productId);
+				query.setString(3, article.get("title"));
+				query.setString(4, article.get("url"));
+				
+				
+				int result = query.executeUpdate();
+				relatedArticleId++;
+				query.close();
+			}
+		}
+		
+		return relatedArticleId;
+		
+	}
+	
+	private int persistBenefits(Connection connection, 
+			String[] benefits, int productId, int productBenefitId) throws SQLException
+	{	
+		if (benefits != null)
+		{
+			for(String benefit : benefits)
+			{
+				PreparedStatement query = 
+						connection.prepareStatement(DoleLoaderConstants.PRODUCT_INGREDIENT_INSERT);
+				query.setInt(1, productBenefitId);
+				query.setInt(2, productId);
+				//System.out.println("Product Id: " + productId + " | Ingredient: " + ingredient.trim() );
+				query.setString(3, benefit.trim());
+				query.executeUpdate();
+				productBenefitId++;
+			}
+		}
+		
+		return productBenefitId;
 	}
 	
 	

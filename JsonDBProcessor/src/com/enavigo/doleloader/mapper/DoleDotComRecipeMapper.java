@@ -8,7 +8,7 @@ import java.util.List;
 import com.enavigo.doleloader.pojo.Recipe;
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class DoleSaladsCaRecipeMapper implements JsonMapper {
+public class DoleDotComRecipeMapper implements JsonMapper {
 
 	@Override
 	public Object mapJson(JsonNode tree) {
@@ -25,29 +25,10 @@ public class DoleSaladsCaRecipeMapper implements JsonMapper {
 		Iterator<JsonNode> iterator = tree.elements();
 		while(iterator.hasNext())
 		{
-			JsonNode recipeCategoriesNode = iterator.next();
 			
-			//System.out.println("Node size: " + currentNode.size());
-			Iterator<JsonNode> recipeCategoryIterator = recipeCategoriesNode.elements();
-			while(recipeCategoryIterator.hasNext())
-			{	
-				JsonNode currentNode = recipeCategoryIterator.next();
-			
-				category = currentNode.get("parent_category").asText();
-				subCategory = currentNode.get("category").asText();
-
-				if(currentNode.has("recipes"))
-				{
-					Iterator<JsonNode> recipeIterator = currentNode.get("recipes").elements();
-					while(recipeIterator.hasNext())
-					{
-						JsonNode recipeNode = recipeIterator.next();
-						Recipe r = processJson(recipeNode, category, subCategory);
-						if (r != null)
-							recipes.add(r);
-					}
-				}
-			}	
+			JsonNode recipeNode = iterator.next();
+			recipes.add(processJson(recipeNode));
+				
 		}
 		return recipes;
 	}
@@ -58,21 +39,16 @@ public class DoleSaladsCaRecipeMapper implements JsonMapper {
 	 * @return Recipe - the recipe associated with the current node
 	 */
 	
-	private Recipe processJson(JsonNode node, String category, String subCategory)
+	private Recipe processJson(JsonNode node)
 	{
 		Recipe recipe = new Recipe();
-		if(!node.has("title"))
-			return null;
 		recipe.setTitle(node.get("title").asText());
-		recipe.setUrl(node.get("page_url").asText());
-		recipe.setCategory(category);
-		recipe.setSubcategory(subCategory);
+		recipe.setUrl(node.get("url").asText());
+//		recipe.setCategory(category);
+//		recipe.setSubcategory(subCategory);
 		recipe.setTotalTimeUnit("Minutes");
 		if(node.has("servings"))
-		{
-			//System.out.println(node.get("title") + ":" + node.get("servings").asText());
 			recipe.setServingSize(node.get("servings").asText());
-		}
 		if(node.has("cooking_duration"))
 		{
 			//System.out.println(node.get("duration").asText());
