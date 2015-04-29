@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+
+
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.enavigo.doleloader.pojo.Recipe;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -127,8 +132,9 @@ public class DoleDotComRecipeMapper implements JsonMapper {
 			String stepIngredients = recipeStepNode.get("ingredient").asText();
 			if(stepIngredients != null && stepIngredients.trim().length() > 0)
 			{
-				String[] stepIngredientsArray = stepIngredients.split("\n");
-				recipeStep.put("ingredients", stepIngredientsArray);
+				Object[] stepIngredientsArray = stepIngredients.split("\n");
+				stepIngredientsArray = ArrayUtils.remove(stepIngredientsArray, 0);
+				recipeStep.put("ingredients", (String[])stepIngredientsArray);
 			}
 			
 			recipeSteps.add(recipeStep);
