@@ -30,7 +30,7 @@ public class DBLoader {
 			
 		
 		ObjectMapper mapper = new ObjectMapper();
-		Connection connection = null;;
+		Connection connection = null;
 		List<HashMap<String, String>> tasks = null;
 		
 		// load tasks from config file
@@ -104,7 +104,6 @@ public class DBLoader {
 		
 			Path currentRelativePath = Paths.get("");
 			String s = currentRelativePath.toAbsolutePath().toString();
-			System.out.println("Current relative path is: " + s);
 			JsonNode taskTree = mapper.readTree(new File("./config/dole-config.json"));
 			
 			JsonNode taskList = taskTree.get("tasks");
@@ -112,7 +111,6 @@ public class DBLoader {
 			while(taskIterator.hasNext())
 			{
 				JsonNode taskNode = taskIterator.next();
-				System.out.println(taskNode.get("name"));
 				HashMap<String, String> task = new HashMap<String, String>();
 				task.put("name", taskNode.get("name").asText());
 				task.put("source-file", taskNode.get("source-file").asText());
