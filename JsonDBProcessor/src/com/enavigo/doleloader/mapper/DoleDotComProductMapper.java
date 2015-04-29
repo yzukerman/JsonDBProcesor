@@ -55,17 +55,14 @@ public class DoleDotComProductMapper implements JsonMapper {
 	{
 		String url = null;
 		// detect error
-		if(node.has("url"))
+		if(!node.has("title"))
 		{
-			url = node.get("url").asText();
-			System.out.println(url);
-			if(url.contains("Default-Error"))
-				return null;
+			return null;
 		}
 		//System.out.println(node.get("title").asText());
 		Product product = new Product();
 		product.setTitle(node.get("title").asText());
-		product.setUrl(url);
+		product.setUrl(node.get("url").asText());
 		if(node.has("image"))
 			product.setImageUrl(node.get("image").asText());
 		product.setDescription(node.get("description").asText());
@@ -75,22 +72,26 @@ public class DoleDotComProductMapper implements JsonMapper {
 		if(node.has("Stat1"))
 			product.setStat1(node.get("Stat1").asText().replace("\n", " "));
 		if(node.has("Stat2"))
-			product.setStat2(node.get("Stat2").asText().replace("\n", " "));
+			product.setStat2(node.get("stat2").asText().replace("\n", " "));
 		if(node.has("Stat3"))
-			product.setStat3(node.get("Stat3").asText().replace("\n", " "));
+			product.setStat3(node.get("stat3").asText().replace("\n", " "));
 		if(node.has("benefits"))
 		{
 			product.setBenefits(getBenefits(node.get("benefits")));
 		}
 		if(node.has("ingredients"))
 		{
-			// verify these are ingredients and not another section
-			String sectionTitle = node.get("ingredient_section_title").asText();
-			if (sectionTitle.equals("Ingredients"))
+			JsonNode ingredientsNode = node.get("ingredients");
+			if(ingredientsNode.size() > 0)
 			{
-				String ingredients = node.get("ingredients").asText();
-				String[] ingredientArray = ingredients.split(",");
-				product.setIngredients(ingredientArray);
+				// verify these are ingredients and not another section
+				String sectionTitle = node.get("ingredient_section_title").asText();
+				if (sectionTitle.equals("Ingredients"))
+				{
+					String ingredients = node.get("ingredients").asText();
+					String[] ingredientArray = ingredients.split(",");
+					product.setIngredients(ingredientArray);
+				}
 			}
 		}
 		if(node.has("nutrition_facts"))

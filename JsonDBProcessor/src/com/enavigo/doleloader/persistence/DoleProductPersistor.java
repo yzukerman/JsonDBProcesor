@@ -45,6 +45,7 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 				"related_article_id") + 1;
 		for(Product p : products)
 		{
+			System.out.println("Persisting: " + p.getTitle());
 			persistProduct(connection, p, nextProductId, sourceSite);
 			nextRelatedRecipeId = persistRelatedRecipe(connection, p.getRelatedRecipes(), nextProductId, 
 								nextRelatedRecipeId);
@@ -142,6 +143,7 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 		{
 			for(String ingredient : ingredients)
 			{
+				if(ingredient.length() == 0) continue; 
 				PreparedStatement query = 
 						connection.prepareStatement(DoleLoaderConstants.PRODUCT_INGREDIENT_INSERT);
 				query.setInt(1, ingredientId);
