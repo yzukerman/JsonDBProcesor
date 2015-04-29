@@ -71,6 +71,9 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 			+ "difficulty_value, image_url, vegetable_servings, nutrition_facts_html
 		 */
 		
+		//System.out.println("Persisting recipe: " + r.getTitle());
+		
+		
 		PreparedStatement query = 
 				connection.prepareStatement(DoleLoaderConstants.RECIPE_INSERT_NO_NUTRITION);
 		query.setInt(1, recipeId);
@@ -155,6 +158,13 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 			PreparedStatement query =  
 					connection.prepareStatement(DoleLoaderConstants.RECIPE_STEP_INSERT);
 			
+			/*
+			 * "INSERT INTO recipe_step (recipe_step_id,"
+			+ "recipe_id, step_description"
+			+ ") VALUES "
+			+ "(?, ?, ?)";
+			 */
+			
 			query.setInt(1, stepId);
 			query.setInt(2, recipeId);
 			query.setString(3, (String)step.get("description"));
@@ -166,6 +176,7 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 			{
 				for(String ingredient : stepIngredients)
 				{
+					if(ingredient.length() == 0) continue;
 					PreparedStatement ingredientQuery =  
 							connection.prepareStatement(
 									DoleLoaderConstants.RECIPE_STEP_INGREDIENT_INSERT);
@@ -201,11 +212,14 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 			PreparedStatement query =  
 					connection.prepareStatement(DoleLoaderConstants.RECIPE_INGREDIENT_INSERT);
 			
+			//"INSERT INTO recipe_ingredient (recipe_ingredient_id, recipe_recipe_id,"
+			//+ "recipe_ingredient_string, recipe_ingredient_title, recipe_ingredient_quantity"
+			
 			query.setInt(1, ingredientId);
 			query.setInt(2, recipeId);
 			query.setString(3, ingredient.get("recipeIngredientString"));
 			query.setString(4, ingredient.get("title"));
-			query.setString(5, ingredient.get("image"));
+			query.setString(5, ingredient.get("quantity"));
 			
 			int result = query.executeUpdate();
 			ingredientId++;

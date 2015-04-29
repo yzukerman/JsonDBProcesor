@@ -53,7 +53,7 @@ public class DoleLoaderConstants {
 			+ "(recipe_id, source_site_id, title, url,"
 			+ "category, subcategory, "
 			+ "prep_value, prep_unit, total_time_value, total_time_unit,"
-			+ "serving_size, calories, description, difficulty_description,"
+			+ "servings, calories, description, difficulty_description,"
 			+ "difficulty_value, image_url, vegetable_servings, nutrition_facts_html)"
 			+ " VALUES ("
 			+ "?, ?, ?, ?, ?," +

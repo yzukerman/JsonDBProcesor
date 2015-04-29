@@ -13,21 +13,19 @@ public class DoleDotComRecipeMapper implements JsonMapper {
 	@Override
 	public Object mapJson(JsonNode tree) {
 		List<Recipe> recipes = new ArrayList<Recipe>();
-		String category = null;
-		String subCategory = null;
-		
-//		System.out.println(tree.size());
-//		Iterator<String> fieldNames = tree.fieldNames();
-//		while (fieldNames.hasNext())
-//		{
-//			System.out.println(fieldNames.next());
-//		}
+
 		Iterator<JsonNode> iterator = tree.elements();
 		while(iterator.hasNext())
 		{
 			
-			JsonNode recipeNode = iterator.next();
-			recipes.add(processJson(recipeNode));
+			Iterator<JsonNode> i = iterator.next().elements();
+			while(i.hasNext())
+			{
+				JsonNode recipeNode = i.next();
+				Recipe recipe = processJson(recipeNode);
+				if (recipe != null)
+					recipes.add(recipe);
+			}
 				
 		}
 		return recipes;
@@ -42,9 +40,11 @@ public class DoleDotComRecipeMapper implements JsonMapper {
 	private Recipe processJson(JsonNode node)
 	{
 		Recipe recipe = new Recipe();
-		recipe.setTitle(node.get("title").asText());
-		recipe.setUrl(node.get("url").asText());
-//		recipe.setCategory(category);
+		String title = node.get("title").asText();
+		recipe.setTitle(title);
+		System.out.println("Recipe title:" + title);
+		recipe.setUrl(node.get("page_url").asText());
+		recipe.setCategory(node.get("Category").asText());
 //		recipe.setSubcategory(subCategory);
 		recipe.setTotalTimeUnit("Minutes");
 		if(node.has("servings"))
@@ -54,17 +54,22 @@ public class DoleDotComRecipeMapper implements JsonMapper {
 			//System.out.println(node.get("duration").asText());
 			recipe.setTotalTimeValue(new Integer(node.get("cooking_duration").asText().split(" ")[0]).intValue());
 		}
+		recipe.setPrepValue(node.get("prep_value").asInt());
+		recipe.setPrepUnit(node.get("prep_unit").asText());
+		recipe.setTotalTimeValue(node.get("total_time_value").asInt());
+		recipe.setTotalTimeUnit(node.get("total_time_unit").asText());
+		recipe.setDifficultyDescription(node.get("difficulty_description").asText());
+		recipe.setDifficultyValue(node.get("difficulty_value").asInt());
+		recipe.setCalories(node.get("calories").asInt());
+		recipe.setServings(node.get("servings").asInt());
+		recipe.setDescription(node.get("about_text").asText());
 		if(node.has("image"))
 			recipe.setImageUrl(node.get("image").asText());
-		if(node.has("subhead"))
-			recipe.setDescription(node.get("subhead").asText());
-		recipe.setIngredients(getIngredientList(node.get("ingredients")));
-		if(node.has("featured_product_title"))
-			recipe.setRelatedProducts(getRelatedProduct(
-					node.get("featured_product_image").asText(),
-					node.get("featured_product_title").asText(),
-					node.get("featured_product_url").asText()));
-		recipe.setRecipeSteps(getRecipeSteps(node.get("directions")));
+		if(node.has("ingredients"))
+			recipe.setIngredients(getIngredientList(node.get("ingredients")));
+		List<HashMap<String, Object>> steps = getRecipeSteps(node.get("steps"));
+		if (steps != null)
+			recipe.setRecipeSteps(steps);
 		if (node.has("related_recipes"))
 			recipe.setRelatedRecipes(getRelatedRecipes(node.get("related_recipes")));
 
@@ -86,30 +91,18 @@ public class DoleDotComRecipeMapper implements JsonMapper {
 		{
 			JsonNode ingredientNode = i.next();
 			HashMap<String, String> relatedRecipe = new HashMap<String, String>();
-			relatedRecipe.put("recipeIngredientString", ingredientNode.get("ingredient").asText());
+			String ingredient = ingredientNode.get("ingredient").asText();
+			String quantity = ingredientNode.get("quantity").asText();
+			String recipeIngredientString = quantity + " " + ingredient;
+			relatedRecipe.put("recipeIngredientString", recipeIngredientString);
+			relatedRecipe.put("title", ingredient);
+			relatedRecipe.put("quantity", quantity	);
 			
 			ingredients.add(relatedRecipe);
 		}
 		return ingredients;
 	}
 	
-	/***
-	 * Returns a collection containing the products related to the current recipe
-	 * @param node the JSON Node containing an array of related products
-	 * @return a collection containing the related products' information
-	 */
-	private List<HashMap<String, String>> getRelatedProduct(String image, String title, String url)
-	{
-		ArrayList<HashMap<String, String>> relatedProducts = 
-								new ArrayList<HashMap<String, String>>();
-		
-		HashMap<String, String> relatedProduct = new HashMap<String, String>();
-		relatedProduct.put("image", image);
-		relatedProduct.put("title", title);
-		relatedProduct.put("url", url);
-		relatedProducts.add(relatedProduct);
-		return relatedProducts;
-	}
 
 	/***
 	 * Creates a list of related recipe steps
@@ -120,13 +113,24 @@ public class DoleDotComRecipeMapper implements JsonMapper {
 	{
 		ArrayList<HashMap<String, Object>> recipeSteps = 
 								new ArrayList<HashMap<String, Object>>();
+		if(node == null) return null;
 		
 		Iterator<JsonNode> i = node.elements();
 		while (i.hasNext())
 		{
 			JsonNode recipeStepNode = i.next();
 			HashMap<String, Object> recipeStep = new HashMap<String, Object>();
-			recipeStep.put("description", recipeStepNode.get("direction").asText());
+			String description = recipeStepNode.get("direction").asText();
+			if (description.trim().length() == 0)
+				continue;
+			recipeStep.put("description", description);
+			String stepIngredients = recipeStepNode.get("ingredient").asText();
+			if(stepIngredients != null && stepIngredients.trim().length() > 0)
+			{
+				String[] stepIngredientsArray = stepIngredients.split("\n");
+				recipeStep.put("ingredients", stepIngredientsArray);
+			}
+			
 			recipeSteps.add(recipeStep);
 		}
 		return recipeSteps;
@@ -147,9 +151,8 @@ public class DoleDotComRecipeMapper implements JsonMapper {
 		{
 			JsonNode relatedRecipeNode = i.next();
 			HashMap<String, String> relatedRecipe = new HashMap<String, String>();
-			relatedRecipe.put("image", relatedRecipeNode.get("related_recipe_image").asText());
-			relatedRecipe.put("title", relatedRecipeNode.get("related_recipe_title").asText());
-			relatedRecipe.put("url", relatedRecipeNode.get("related_recipe_url").asText());
+			relatedRecipe.put("image", relatedRecipeNode.get("image").asText());
+			relatedRecipe.put("title", relatedRecipeNode.get("title").asText());
 			relatedRecipes.add(relatedRecipe);
 		}
 		return relatedRecipes;
