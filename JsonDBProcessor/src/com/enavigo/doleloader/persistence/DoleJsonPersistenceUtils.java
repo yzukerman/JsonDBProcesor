@@ -35,6 +35,8 @@ public class DoleJsonPersistenceUtils {
 			maxProductId = rs.getInt("max_id");
 		}
 		
+		query.close();
+		
 		return maxProductId;
 	}
 }

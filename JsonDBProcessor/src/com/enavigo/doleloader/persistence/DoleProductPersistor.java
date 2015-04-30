@@ -88,6 +88,8 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 		query.setString(12, p.getNutritionlabelHtml());
 		
 		int result = query.executeUpdate();
+		
+		query.close();
 	}
 	
 	/**
@@ -120,6 +122,8 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 			
 			
 			int result = query.executeUpdate();
+			
+			query.close();
 			recipeId++;
 		}
 		
@@ -152,6 +156,7 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 				query.setString(3, ingredient.trim());
 				query.executeUpdate();
 				ingredientId++;
+				query.close();
 			}
 		}
 		
@@ -190,6 +195,7 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 				
 				int result = query.executeUpdate();
 				relatedProductId++;
+				query.close();
 			}
 		}
 		
@@ -247,6 +253,7 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 				query.setString(3, benefit.trim());
 				query.executeUpdate();
 				productBenefitId++;
+				query.close();
 			}
 		}
 		

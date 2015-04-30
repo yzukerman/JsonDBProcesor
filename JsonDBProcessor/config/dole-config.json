@@ -3,6 +3,27 @@
 		[
 			
 			{
+				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/Dole Salads/dole-salads-recipes-150428.json",
+				"mapper":"com.enavigo.doleloader.mapper.DoleSaladsRecipeMapper",
+				"name": "DoleSalads.com recipes",
+				"source-site": "s",
+				"persistor": "com.enavigo.doleloader.persistence.DoleRecipePersistor"
+			},
+			{
+				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/newsletter.dole.com/newsletter-dole-articles-150429.json",
+				"mapper":"com.enavigo.doleloader.mapper.NewsletterArticleMapper",
+				"name": "Newsletter Articles",
+				"source-site": "n",
+				"persistor": "com.enavigo.doleloader.persistence.DoleArticlePersistor"
+			},	
+			{
+				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/Dole.com/dole-dot-com-articles-150429.json",
+				"mapper":"com.enavigo.doleloader.mapper.DoleDotComArticleMapper",
+				"name": "Dole.com Articles",
+				"source-site": "d",
+				"persistor": "com.enavigo.doleloader.persistence.DoleArticlePersistor"
+			},
+			{
 				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/Dole.com/dole-dot-com-products-150421.json",
 				"mapper":"com.enavigo.doleloader.mapper.DoleDotComProductMapper",
 				"name": "Dole.com Products",
