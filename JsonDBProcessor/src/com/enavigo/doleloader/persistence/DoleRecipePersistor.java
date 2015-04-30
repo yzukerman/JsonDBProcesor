@@ -38,7 +38,9 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 		
 		for(Recipe recipe : recipes)
 		{
-			persistRecipe(connection, recipe, nextRecipeId, sourceSite);
+			boolean success = persistRecipe(connection, recipe, nextRecipeId, sourceSite);
+			if(!success)
+				continue;
 			nextRelatedRecipeId = persistRelatedRecipe(connection, 
 					recipe.getRelatedRecipes(), nextRecipeId, nextRelatedRecipeId);
 			recipeStepIds = persistRecipeSteps(connection, 
@@ -59,7 +61,7 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 	 * @param sourceSite the site from which the recipe was extracted
 	 * @throws SQLException
 	 */
-	private void persistRecipe(Connection connection, Recipe r, 
+	private boolean persistRecipe(Connection connection, Recipe r, 
 					int recipeId, char sourceSite) throws SQLException 
 	{
 		/*
@@ -71,7 +73,7 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 			+ "difficulty_value, image_url, vegetable_servings, nutrition_facts_html
 		 */
 		
-		//System.out.println("Persisting recipe: " + r.getTitle());
+		System.out.println("Persisting recipe: " + r.getTitle());
 		
 		
 		PreparedStatement query = 
@@ -94,8 +96,19 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 		query.setString(16, r.getImageUrl());
 		query.setString(17, r.getVegetableServings());
 		query.setString(18, r.getNutritionlabelHtml());
+		try
+		{
+			int result = query.executeUpdate();
+		}
+		catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException micve)
+		{
+			
+			System.out.println("Duplicate: " + micve.getLocalizedMessage());
+			System.out.println(r.getUrl());
+			return false;
+		}
 		
-		int result = query.executeUpdate();
+		return true;
 	}
 	
 	/**
