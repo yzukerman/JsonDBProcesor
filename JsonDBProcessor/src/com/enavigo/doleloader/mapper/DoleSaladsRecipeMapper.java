@@ -3,10 +3,17 @@ package com.enavigo.doleloader.mapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 
 
+
+
+
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -61,14 +68,46 @@ public class DoleSaladsRecipeMapper implements JsonMapper {
 		recipe.setTitle(title);
 		System.out.println("Recipe title:" + title);
 		recipe.setUrl(node.get("url").asText());
+		recipe.setCategory(node.get("categories").get(2).get("category").asText());
+		// see if there is a subcategory
+		if(node.get("categories").has(3))
+			recipe.setSubcategory(node.get("categories").get(3).get("category").asText());
 		if(node.has("description"))
-			recipe.setDescription(node.get("description").asText());
+		{
+			String description = node.get("description").asText();
+			// remove potentially 'read more' text 
+			description.replace("...", "");
+			description.replace(" Read More", "");
+							
+			recipe.setDescription(description);
+		}
 		if(node.has("duration"))
 		{
 			String durationString = node.get("duration").asText();
 			String[] durationBits = durationString.split(" ");
-			recipe.setTotalTimeValue(new Integer(durationBits[0]).intValue());
-			recipe.setTotalTimeUnit(durationBits[1]);
+			
+			try
+			{
+				recipe.setTotalTimeValue(new Integer(durationBits[0]).intValue());
+				recipe.setTotalTimeUnit(durationBits[1]);
+			}
+			catch(NumberFormatException nfe)
+			{
+				// unpack digits from characters
+				Pattern pattern = Pattern.compile("\\d+");
+				Matcher matcher = pattern.matcher(durationBits[0]);
+				if(matcher.find())
+				{
+					recipe.setTotalTimeValue(new Integer(matcher.group(0)));
+				}
+				
+				pattern = Pattern.compile("\\D+");
+				matcher = pattern.matcher(durationBits[0]);
+				if(matcher.find())
+				{
+					recipe.setTotalTimeUnit(matcher.group(0));
+				}
+			}
 		}
 		
 		if(node.has("servings"))
@@ -78,20 +117,22 @@ public class DoleSaladsRecipeMapper implements JsonMapper {
 		{
 			String durationString = node.get("veg_servings").asText();
 			String[] durationBits = durationString.split(" ");
-			recipe.setVegetableServings(new Integer(durationBits[0]).intValue());
+			recipe.setVegetableServings(durationBits[0]);
 		}
 		if(node.has("image"))
 			recipe.setImageUrl(node.get("image").asText());
 		recipe.setNutritionlabelHtml(node.get("nutrition_facts").asText());
 		
 		
-		if(node.has("ingredients"))
-			recipe.setIngredients(getIngredientList(node.get("ingredients")));
-		List<HashMap<String, Object>> steps = getRecipeSteps(node.get("steps"));
+		if(node.has("ingredient_list"))
+			recipe.setIngredients(getIngredientList(node.get("ingredient_list")));
+		
+		List<HashMap<String, Object>> steps = getRecipeSteps(node.get("direction_list"));
 		if (steps != null)
 			recipe.setRecipeSteps(steps);
+		
 		if (node.has("related_recipes"))
-			recipe.setRelatedRecipes(getRelatedRecipes(node.get("related_recipes")));
+			recipe.setRelatedRecipes(getRelatedRecipes(node.get("related_recipes"), node.get("related_recipe_images")));
 
 		return recipe;
 	}
@@ -112,11 +153,7 @@ public class DoleSaladsRecipeMapper implements JsonMapper {
 			JsonNode ingredientNode = i.next();
 			HashMap<String, String> relatedRecipe = new HashMap<String, String>();
 			String ingredient = ingredientNode.get("ingredient").asText();
-			String quantity = ingredientNode.get("quantity").asText();
-			String recipeIngredientString = quantity + " " + ingredient;
-			relatedRecipe.put("recipeIngredientString", recipeIngredientString);
-			relatedRecipe.put("title", ingredient);
-			relatedRecipe.put("quantity", quantity	);
+			relatedRecipe.put("recipeIngredientString", ingredient);
 			
 			ingredients.add(relatedRecipe);
 		}
@@ -144,13 +181,6 @@ public class DoleSaladsRecipeMapper implements JsonMapper {
 			if (description.trim().length() == 0)
 				continue;
 			recipeStep.put("description", description);
-			String stepIngredients = recipeStepNode.get("ingredient").asText();
-			if(stepIngredients != null && stepIngredients.trim().length() > 0)
-			{
-				Object[] stepIngredientsArray = stepIngredients.split("\n");
-				stepIngredientsArray = ArrayUtils.remove(stepIngredientsArray, 0);
-				recipeStep.put("ingredients", (String[])stepIngredientsArray);
-			}
 			
 			recipeSteps.add(recipeStep);
 		}
@@ -160,25 +190,29 @@ public class DoleSaladsRecipeMapper implements JsonMapper {
 	/***
 	 * Creates a list of related recipe items
 	 * @param node The node containing the collection of related recipes
+	 * @param imagesNode The node containing the collection of related recipes images
 	 * @return a collection of related recipes
 	 */
-	private List<HashMap<String, String>> getRelatedRecipes(JsonNode node)
+	private List<HashMap<String, String>> getRelatedRecipes(JsonNode node, JsonNode imagesNode)
 	{
 		ArrayList<HashMap<String, String>> relatedRecipes = 
 								new ArrayList<HashMap<String, String>>();
 		
 		Iterator<JsonNode> i = node.elements();
+		int x = 0;
 		while (i.hasNext())
 		{
 			JsonNode relatedRecipeNode = i.next();
 			HashMap<String, String> relatedRecipe = new HashMap<String, String>();
-			relatedRecipe.put("image", relatedRecipeNode.get("image").asText());
+			relatedRecipe.put("image", imagesNode.get(x).get("url").asText());
 			relatedRecipe.put("title", relatedRecipeNode.get("title").asText());
+			relatedRecipe.put("url", relatedRecipeNode.get("url").asText());
 			relatedRecipes.add(relatedRecipe);
+			x++;
 		}
 		return relatedRecipes;
 	}
-	
+
 	
 	
 }
