@@ -20,7 +20,7 @@ public class Recipe {
 	private int difficultyValue = 0;
 	private int servings = 0;
 	private String servingSize = null;
-	private int vegetableServings = 0;
+	private String vegetableServings = null;
 	private int servingsPerContainer = 0;
 	private int calories = 0;
 	private int caloriesFromFat = 0;
@@ -140,10 +140,10 @@ public class Recipe {
 	public void setServingSize(String servingSize) {
 		this.servingSize = servingSize;
 	}
-	public int getVegetableServings() {
+	public String getVegetableServings() {
 		return vegetableServings;
 	}
-	public void setVegetableServings(int vegetableServings) {
+	public void setVegetableServings(String vegetableServings) {
 		this.vegetableServings = vegetableServings;
 	}
 	public int getServingsPerContainer() {
