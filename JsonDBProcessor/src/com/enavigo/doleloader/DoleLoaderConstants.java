@@ -85,4 +85,23 @@ public class DoleLoaderConstants {
 			+ ") VALUES "
 			+ "(?, ?, ?, ?, ?)";
 	
+	public static String ARTICLE_INSERT = 
+			"INSERT INTO article (article_id, title, body,"
+			+ "category, byline, source_site, url, image_url, publish_date, subhead"
+			+ ") VALUES "
+			+ "(?, ?, ?, ?, ?,"
+			+ "?, ?, ?, ?, ?)";
+	
+	public static String ARTICLE_RELATED_RECIPE_INSERT =
+			"INSERT INTO article_related_recipe"
+			+ "(article_related_recipe_id, article_id, related_recipe_title, related_recipe_url)"
+			+ " VALUES "
+			+ "(?, ?, ?, ?)";
+	
+	public static String ARTICLE_TAG_INSERT =
+			"INSERT INTO article_tag"
+			+ "(article_tag_id, article_id, tag_text)"
+			+ " VALUES "
+			+ "(?, ?, ?)";
+	
 }
