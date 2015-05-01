@@ -54,12 +54,12 @@ public class DoleLoaderConstants {
 			+ "category, subcategory, "
 			+ "prep_value, prep_unit, total_time_value, total_time_unit,"
 			+ "servings, calories, description, difficulty_description,"
-			+ "difficulty_value, image_url, vegetable_servings, nutrition_facts_html)"
+			+ "difficulty_value, image_url, vegetable_servings, nutrition_facts_html, cook_time_value, cook_time_unit)"
 			+ " VALUES ("
 			+ "?, ?, ?, ?, ?," +
 			"?, ?, ?, ?, ?," +
 			"?, ?, ?, ?, ?," +
-			"?, ?, ?)";
+			"?, ?, ?, ?, ?)";
 	
 	public static String RECIPE_RELATED_RECIPE_INSERT = 
 			"INSERT INTO related_recipe (rr_id,"

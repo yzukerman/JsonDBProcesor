@@ -13,12 +13,15 @@ public class Recipe {
 	// preparation information (e.g. 5 minutes)
 	private int prepValue = 0; // 5 (in 5 minutes)
 	private String prepUnit = null; // "minutes"
+	private int cookTimeValue = 0; // 5 (in 5 minutes)
+	private String cookTimeUnit = null; // "minutes"
 	private int totalTimeValue = 0;
 	private String totalTimeUnit = null;
 	private String description = null;
 	private String difficultyDescription = null;
 	private int difficultyValue = 0;
 	private int servings = 0;
+	private String servingsString = null;
 	private String servingSize = null;
 	private String vegetableServings = null;
 	private int servingsPerContainer = 0;
@@ -50,6 +53,19 @@ public class Recipe {
 	private List<HashMap<String, Object>> recipeSteps;
 	private List<HashMap<String, String>> nutrients = null;
 	
+	
+	public int getCookTimeValue() {
+		return cookTimeValue;
+	}
+	public void setCookTimeValue(int cookTimeValue) {
+		this.cookTimeValue = cookTimeValue;
+	}
+	public String getCookTimeUnit() {
+		return cookTimeUnit;
+	}
+	public void setCookTimeUnit(String cookTimeUnit) {
+		this.cookTimeUnit = cookTimeUnit;
+	}
 	public String getTitle() {
 		return title;
 	}
@@ -313,6 +329,12 @@ public class Recipe {
 	}
 	public void setRelatedProducts(List<HashMap<String, String>> relatedProducts) {
 		this.relatedProducts = relatedProducts;
+	}
+	public String getServingsString() {
+		return servingsString;
+	}
+	public void setServingsString(String servingsString) {
+		this.servingsString = servingsString;
 	}
 	
 	

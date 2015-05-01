@@ -96,6 +96,9 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 		query.setString(16, r.getImageUrl());
 		query.setString(17, r.getVegetableServings());
 		query.setString(18, r.getNutritionlabelHtml());
+		query.setInt(19, r.getCookTimeValue());
+		query.setString(20, r.getCookTimeUnit());
+		
 		try
 		{
 			int result = query.executeUpdate();
