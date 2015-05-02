@@ -118,6 +118,62 @@ public class DoleSaladsNutritionHtmlParser {
 				result.put("sodium_percent", percentVal);
 			}
 			
+			// potassium
+			curStr = nutrientList.item(8).getTextContent();
+			gramVal = getNumericValue(curStr, "g");
+			percentVal = getNumericValue(curStr, "%");
+			if(gramVal >= 0)
+			{
+				result.put("potassium_g", gramVal);
+				result.put("potassium_percent", percentVal);
+			}	
+			// carbs
+			curStr = nutrientList.item(9).getTextContent();
+			gramVal = getNumericValue(curStr, "g");
+			percentVal = getNumericValue(curStr, "%");
+			if(gramVal >= 0)
+			{
+				result.put("total_carbs", gramVal);
+				result.put("total_carbs_percent", percentVal);
+			}
+			// fiber
+			curStr = nutrientList.item(10).getTextContent();
+			gramVal = getNumericValue(curStr, "g");
+			percentVal = getNumericValue(curStr, "%");
+			if(gramVal >= 0)
+			{
+				result.put("dietary_fiber", gramVal);
+				result.put("dietary_fiber_percent", percentVal);
+			}
+			// sugars
+			curStr = nutrientList.item(11).getTextContent();
+			gramVal = getNumericValue(curStr, "g");
+			if(gramVal >= 0)
+			{
+				result.put("sugars", gramVal);
+			}
+			// protein
+			curStr = nutrientList.item(12).getTextContent();
+			gramVal = getNumericValue(curStr, "g");
+			if(gramVal >= 0)
+			{
+				result.put("protein", gramVal);
+			}
+			
+			String varNutrients = nutrientList.item(13).getTextContent().trim();
+			String[] varNutrientArray = varNutrients.split("\n");
+			String nutName = null;
+			int nutPercent = 0;
+			for (String curNutrient : varNutrientArray)
+			{
+				if(curNutrient.contains("%"))
+				{
+					nutPercent = Integer.parseInt(curNutrient.replaceAll("\\D", ""));
+					nutName = curNutrient.replaceAll("\\s\\d*%","").trim();
+					result.put(nutName, nutPercent);
+				}
+			}
+			
 		}
 		catch (Exception e) // throws ParserConfigurationException, IOException, SAXException
 		{
@@ -154,5 +210,5 @@ public class DoleSaladsNutritionHtmlParser {
 		return value;
 	}
 	
-
+	
 }
