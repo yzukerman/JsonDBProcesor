@@ -58,11 +58,11 @@ public class DoleSaladsNutritionHtmlParser {
 			for(int x = 0; x < nutrientList.getLength(); x++)
 				System.out.println("Node " + x + " value: '" + nutrientList.item(x).getTextContent() +"'");
 			
-			for(int x = 0; x < nutrientList.item(1).getChildNodes().getLength(); x++)
-			{
-				System.out.println("Node " + x + " type: " + nutrientList.item(1).getChildNodes().item(x).getNodeType());
-				System.out.println("Node " + x + " value: '" + nutrientList.item(1).getChildNodes().item(x).getTextContent()+"'");
-			}
+//			for(int x = 0; x < nutrientList.item(1).getChildNodes().getLength(); x++)
+//			{
+//				System.out.println("Node " + x + " type: " + nutrientList.item(1).getChildNodes().item(x).getNodeType());
+//				System.out.println("Node " + x + " value: '" + nutrientList.item(1).getChildNodes().item(x).getTextContent()+"'");
+//			}
 			
 			// calories
 			NodeList calorieList = nutrientList.item(1).getChildNodes();
@@ -76,9 +76,9 @@ public class DoleSaladsNutritionHtmlParser {
 			
 			// fat
 			String totalFatStr = nutrientList.item(3).getTextContent();
-			int totalFat = getNumericValue(totalFatStr, "g");
+			int totalFat = getNumericValue(totalFatStr, "g*");
 			int totalFatPercent = getNumericValue(totalFatStr, "%");
-			if(totalFat >= 0)
+			if(totalFat >= 0 || totalFatPercent >= 0)
 			{
 				topResult.put("total_fat", totalFat);
 				topResult.put("total_fat_percent", totalFatPercent);
@@ -86,9 +86,9 @@ public class DoleSaladsNutritionHtmlParser {
 			
 			// saturated fat
 			String satFatStr = nutrientList.item(4).getTextContent();
-			int satFat = getNumericValue(satFatStr, "g");
+			double satFat = getDoubleValue(satFatStr, "g*");
 			int satFatPercent = getNumericValue(satFatStr, "%");
-			if(totalFat >= 0)
+			if(satFat >= 0.0)
 			{
 				topResult.put("saturated_fat", satFat);
 				topResult.put("saturated_fat_percent", satFatPercent);
@@ -96,7 +96,7 @@ public class DoleSaladsNutritionHtmlParser {
 			
 			// transfat
 			String tFatStr = nutrientList.item(5).getTextContent();
-			int tFat = getNumericValue(satFatStr, "g");
+			int tFat = getNumericValue(tFatStr, "g");
 			if(tFat >= 0)
 			{
 				topResult.put("trans_fat", tFat);
@@ -111,10 +111,16 @@ public class DoleSaladsNutritionHtmlParser {
 				topResult.put("cholesterol_mg", gramVal);
 				topResult.put("cholesterol_percent", percentVal);
 			}
+			else 
+			{
+				gramVal = getNumericValue(curStr, "g");
+				topResult.put("cholesterol_mg", gramVal);
+				topResult.put("cholesterol_percent", percentVal);
+			}
 			
 			// sodium
 			curStr = nutrientList.item(7).getTextContent();
-			gramVal = getNumericValue(curStr, "mg");
+			gramVal = getNumericValue(curStr, "m*g");
 			percentVal = getNumericValue(curStr, "%");
 			if(gramVal >= 0)
 			{
@@ -123,14 +129,14 @@ public class DoleSaladsNutritionHtmlParser {
 			}
 			
 			// potassium
-			curStr = nutrientList.item(8).getTextContent();
-			gramVal = getNumericValue(curStr, "g");
-			percentVal = getNumericValue(curStr, "%");
-			if(gramVal >= 0)
-			{
-				topResult.put("potassium_g", gramVal);
-				topResult.put("potassium_percent", percentVal);
-			}	
+//			curStr = nutrientList.item(8).getTextContent();
+//			gramVal = getNumericValue(curStr, "g");
+//			percentVal = getNumericValue(curStr, "%");
+//			if(gramVal >= 0)
+//			{
+//				topResult.put("potassium_g", gramVal);
+//				topResult.put("potassium_percent", percentVal);
+//			}	
 			// carbs
 			curStr = nutrientList.item(9).getTextContent();
 			gramVal = getNumericValue(curStr, "g");
@@ -199,7 +205,7 @@ public class DoleSaladsNutritionHtmlParser {
 	private static int getNumericValue(String source, String type)
 	{
 		int value = -1;
-		String patternString = "\\d+\\.*\\d*";
+		String patternString = "\\d+\\.*\\d*"; //\\d+\\.*\\d*m*g
 		if(type != null)
 			patternString = patternString.concat(type);
 		Pattern p = Pattern.compile(patternString);
@@ -210,6 +216,25 @@ public class DoleSaladsNutritionHtmlParser {
 			//remove characters in case we have them
 			result = result.replaceAll("\\D", "");
 			value = Integer.parseInt(result);
+		}		
+		
+		return value;
+	}
+	
+	private static double getDoubleValue(String source, String type)
+	{
+		double value = -1;
+		String patternString = "\\d+\\.*\\d*"; //\\d+\\.*\\d*m*g
+		if(type != null)
+			patternString = patternString.concat(type);
+		Pattern p = Pattern.compile(patternString);
+		Matcher m = p.matcher(source);
+		if(m.find())
+		{
+			String result = m.group();
+			//remove characters in case we have them
+			result = result.replaceAll("[a-z]", "");
+			value = Double.parseDouble(result);
 		}		
 		
 		return value;

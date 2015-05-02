@@ -2,14 +2,14 @@
 	"tasks":
 		[
 			
+			
 			{
-				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/Dole Salads/dole-salads-recipes-150428.json",
-				"mapper":"com.enavigo.doleloader.mapper.DoleSaladsRecipeMapper",
-				"name": "DoleSalads.com recipes",
-				"source-site": "s",
+				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/newsletter.dole.com/newsletter-dole-recipes-150501.json",
+				"mapper":"com.enavigo.doleloader.mapper.NewsletterRecipeMapper",
+				"name": "Newsletter Recipes",
+				"source-site": "n",
 				"persistor": "com.enavigo.doleloader.persistence.DoleRecipePersistor"
-			},
-			{
+			},{
 				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/newsletter.dole.com/newsletter-dole-articles-150429.json",
 				"mapper":"com.enavigo.doleloader.mapper.NewsletterArticleMapper",
 				"name": "Newsletter Articles",
@@ -64,6 +64,27 @@
 				"name": "Dole Salads Canada French Recipes",
 				"source-site": "f",
 				"persistor": "com.enavigo.doleloader.persistence.DoleRecipePersistor"
+			},
+			{
+				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/Dole Salads/dole-salads-recipes-150430-2.json",
+				"mapper":"com.enavigo.doleloader.mapper.DoleSaladsRecipeMapper",
+				"name": "DoleSalads.com recipes",
+				"source-site": "s",
+				"persistor": "com.enavigo.doleloader.persistence.DoleRecipePersistor"
+			},
+			{
+				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/Dole Salads/dole-salads-articles-150430.json",
+				"mapper":"com.enavigo.doleloader.mapper.DoleSaladsArticleMapper",
+				"name": "DoleSalads.com articles",
+				"source-site": "s",
+				"persistor": "com.enavigo.doleloader.persistence.DoleArticlePersistor"
+			},
+			{
+				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/Dole Salads/dole-salads-products-150430.json",
+				"mapper":"com.enavigo.doleloader.mapper.DoleSaladsProductMapper",
+				"name": "DoleSalads.com products",
+				"source-site": "s",
+				"persistor": "com.enavigo.doleloader.persistence.DoleProductPersistor"
 			}
 			
 			

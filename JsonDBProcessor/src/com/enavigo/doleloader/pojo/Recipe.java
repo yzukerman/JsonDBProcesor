@@ -21,8 +21,8 @@ public class Recipe {
 	private String difficultyDescription = null;
 	private int difficultyValue = 0;
 	private int servings = 0;
-	private String servingsString = null;
-	private String servingSize = null;
+	private String servingsString = null; // from nutritional values
+	private String servingSize = null; // from the recipe description
 	private String vegetableServings = null;
 	private int servingsPerContainer = 0;
 	private int calories = 0;
@@ -51,7 +51,7 @@ public class Recipe {
 	private List<HashMap<String, String>> relatedProducts;
 	private List<HashMap<String, String>> relatedRecipes;
 	private List<HashMap<String, Object>> recipeSteps;
-	private List<HashMap<String, String>> nutrients = null;
+	private List<HashMap<String, Object>> nutrients = null;
 	
 	
 	public int getCookTimeValue() {
@@ -318,10 +318,10 @@ public class Recipe {
 	public void setRecipeSteps(List<HashMap<String, Object>> recipeSteps) {
 		this.recipeSteps = recipeSteps;
 	}
-	public List<HashMap<String, String>> getNutrients() {
+	public List<HashMap<String, Object>> getNutrients() {
 		return nutrients;
 	}
-	public void setNutrients(List<HashMap<String, String>> nutrients) {
+	public void setNutrients(List<HashMap<String, Object>> nutrients) {
 		this.nutrients = nutrients;
 	}
 	public List<HashMap<String, String>> getRelatedProducts() {

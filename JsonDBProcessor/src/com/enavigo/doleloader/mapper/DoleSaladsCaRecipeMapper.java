@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.enavigo.doleloader.nutrition.html.DoleSaladsNutritionHtmlParser;
 import com.enavigo.doleloader.pojo.Recipe;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -44,7 +45,9 @@ public class DoleSaladsCaRecipeMapper implements JsonMapper {
 						JsonNode recipeNode = recipeIterator.next();
 						Recipe r = processJson(recipeNode, category, subCategory);
 						if (r != null)
+						{
 							recipes.add(r);
+						}
 					}
 				}
 			}	

@@ -104,7 +104,8 @@ public class DBLoader {
 		
 			Path currentRelativePath = Paths.get("");
 			String s = currentRelativePath.toAbsolutePath().toString();
-			JsonNode taskTree = mapper.readTree(new File("./config/dole-config.json"));
+			//JsonNode taskTree = mapper.readTree(new File("./config/dole-config.json"));
+			JsonNode taskTree = mapper.readTree(new File("./config/dole-salads.json"));
 			
 			JsonNode taskList = taskTree.get("tasks");
 			Iterator<JsonNode> taskIterator = taskList.elements();

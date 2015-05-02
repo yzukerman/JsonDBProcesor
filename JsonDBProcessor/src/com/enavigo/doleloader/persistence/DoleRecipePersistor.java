@@ -31,6 +31,8 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 				"recipe_step_ingredient", "recipe_step_ingredient_id") + 1;
 		int nextRelatedRecipeId = DoleJsonPersistenceUtils.getMaxId(connection, 
 				"related_recipe", "rr_id") + 1;
+		int nextRecipeNutrientId = DoleJsonPersistenceUtils.getMaxId(connection, 
+				"recipe_nutrient", "recipe_nutrient_id") + 1;
 		
 		Map<String, Integer> recipeStepIds = new HashMap<String, Integer>();
 		recipeStepIds.put("recipeStepId", new Integer(nextRecipeStepId));
@@ -47,6 +49,7 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 					recipe.getRecipeSteps(), nextRecipeId, recipeStepIds);
 			nextRecipeIngredientId = persistIngredients(connection,
 					recipe.getIngredients(), nextRecipeId, nextRecipeIngredientId);
+			nextRecipeNutrientId = persistNutrients(connection, recipe.getNutrients(), nextRecipeId, nextRecipeNutrientId);
 			nextRecipeId++;
 		}
 		
@@ -244,5 +247,88 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 		return ingredientId;
 		
 	}
+
+	private int persistNutrients(Connection connection, List<HashMap<String, Object>> nutrients, int recipeId, int nextNutrientId) 
+		throws SQLException
+	{
+		HashMap<String, Object> topNutrients = nutrients.get(0);
+		HashMap<String, Object> bottomNutrients = nutrients.get(1);
+		
+		persistTopNutrients(connection, topNutrients, recipeId);
+		
+		return nextNutrientId;
+	}
 	
+	private void persistTopNutrients(
+			Connection connection, Map<String, Object> nutrients, int recipeId) 
+					throws SQLException
+	{
+		System.out.println(nutrients);
+		/*
+		 * "UPDATE recipe SET "
+			+ "serving_size = ?, "
+			+ "calories_from_fat = ?, "
+			+ "calories = ?, "
+			+ "total_fat_grams = ?,"
+			+ "total_fat_percent = ?, "
+			+ "saturated_fat_grams = ?,"
+			+ "saturated_fat_percent = ?, "
+			+ "trans_fat_grams = ?, "
+			+ "cholesterol_mg = ?, "
+			+ "cholesterol_percent = ?,"
+			+ "sodium_mg = ?, "
+			+ "sodium_percent = ?, "
+			+ "potassium_grams = ?, "
+			+ "potassium_percent = ?,"
+			+ "total_carbs_grams = ?, "
+			+ "total_carbs_percent = ?, "
+			+ "fiber_grams = ?, "
+			+ "fiber_percent = ?,"
+			+ "protein_grams = ?, "
+			+ "sugars_grams = ?, "
+			+ "servings_per_container = ?"
+			+ " WHERE recipe_id = ?";
+	
+		 */
+		PreparedStatement query =  
+				connection.prepareStatement(DoleLoaderConstants.UPDATE_RECIPE_NUTRIENTS);
+		query.setString(1, (String)nutrients.get("serving_size"));
+		query.setInt(2, (Integer)nutrients.get("calories_from_fat"));
+		query.setInt(3, (Integer)nutrients.get("calories"));
+		query.setInt(4, (Integer)nutrients.get("total_fat"));
+		query.setInt(5, (Integer)nutrients.get("total_fat_percent"));
+		query.setDouble(6, (Double)nutrients.get("saturated_fat"));
+		query.setInt(7, (Integer)nutrients.get("saturated_fat_percent"));
+		if(nutrients.get("trans_fat") != null)
+			query.setInt(8, (Integer)nutrients.get("trans_fat"));
+		else
+			query.setInt(8, 0);
+		query.setInt(9, (Integer)nutrients.get("cholesterol_mg"));
+		query.setInt(10, (Integer)nutrients.get("cholesterol_percent"));
+		query.setInt(11, (Integer)nutrients.get("sodium_mg"));
+		query.setInt(12, (Integer)nutrients.get("sodium_percent"));
+		query.setInt(13, (Integer)nutrients.get("total_carbs"));
+		query.setInt(14, (Integer)nutrients.get("total_carbs_percent"));
+		query.setInt(15, (Integer)nutrients.get("dietary_fiber"));
+		query.setInt(16, (Integer)nutrients.get("dietary_fiber_percent"));
+		query.setInt(17, (Integer)nutrients.get("protein"));
+		Integer sugars = (Integer)nutrients.get("sugars");
+		if(sugars != null && sugars.intValue() > 0)
+			query.setInt(18, sugars);
+		else
+			query.setInt(18, 0);
+		String spc = (String)nutrients.get("servings_per_container");
+		System.out.println("SPC: '" + spc + "', length: " + spc.length());
+		if(spc != null && spc.length() > 0 )
+			query.setInt(19, (Integer.getInteger(spc)));
+		else
+			query.setInt(19, 0);
+		query.setInt(20, recipeId);
+		
+		query.executeUpdate();
+		
+		query.close();
+		
+		
+	}
 }

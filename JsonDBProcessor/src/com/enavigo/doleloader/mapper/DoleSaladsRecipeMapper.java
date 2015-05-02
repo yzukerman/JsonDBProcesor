@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import com.enavigo.doleloader.nutrition.html.DoleSaladsNutritionHtmlParser;
 import com.enavigo.doleloader.pojo.Recipe;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -46,7 +47,13 @@ public class DoleSaladsRecipeMapper implements JsonMapper {
 					JsonNode recipeNode = r.next();
 					Recipe recipe = processJson(recipeNode);
 					if (recipe != null)
+					{
+						recipe.setNutrients( 
+								DoleSaladsNutritionHtmlParser.parseNutritionalInformation(recipe.getNutritionlabelHtml()));
+//						if(recipe.getTitle().contains("Bliss"))
+//							recipe.getNutrients();
 						recipes.add(recipe);
+					}
 				}
 			}
 				
@@ -212,7 +219,5 @@ public class DoleSaladsRecipeMapper implements JsonMapper {
 		}
 		return relatedRecipes;
 	}
-
-	
 	
 }
