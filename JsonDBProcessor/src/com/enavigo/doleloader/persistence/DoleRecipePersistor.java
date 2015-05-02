@@ -248,13 +248,26 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 		
 	}
 
-	private int persistNutrients(Connection connection, List<HashMap<String, Object>> nutrients, int recipeId, int nextNutrientId) 
+	/**
+	 * Persists nutrition information 
+	 * @param connection the database connection
+	 * @param nutrients a collection containing two array of nutrient data. The top collection involves 
+	 * nutrients that are always on labels. The bottom collection contains variable information about
+	 * nutrients that may or may not appear in a recipe.
+	 * @param recipeId the id of the recipe we are associating nutrients with
+	 * @param nextNutrientId the id of the next nutrient to use when persisting
+	 * @return the next nutrient id
+	 * @throws SQLException
+	 */
+	private int persistNutrients(Connection connection, List<HashMap<String, Object>> nutrients, 
+									int recipeId, int nextNutrientId) 
 		throws SQLException
 	{
 		HashMap<String, Object> topNutrients = nutrients.get(0);
 		HashMap<String, Object> bottomNutrients = nutrients.get(1);
 		
 		persistTopNutrients(connection, topNutrients, recipeId);
+		nextNutrientId = persistBottomNutrients(connection, bottomNutrients, recipeId, nextNutrientId);
 		
 		return nextNutrientId;
 	}
@@ -263,6 +276,9 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 			Connection connection, Map<String, Object> nutrients, int recipeId) 
 					throws SQLException
 	{
+		if (nutrients == null)
+			return;
+		
 		System.out.println(nutrients);
 		/*
 		 * "UPDATE recipe SET "
@@ -330,5 +346,39 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 		query.close();
 		
 		
+	}
+	
+	private int persistBottomNutrients(Connection connection, Map<String, Object> nutrients, 
+										int recipeId, int nextNutrientId) throws SQLException
+	{
+		if(nutrients != null)
+		{
+			PreparedStatement query =  
+					connection.prepareStatement(DoleLoaderConstants.RECIPE_INSERT_NUTRIENT);
+			
+			for(String nutrientName : nutrients.keySet())
+			{
+				int nutrientValue = (Integer)nutrients.get(nutrientName);
+				
+				/*
+				 * "INSERT INTO recipe_nutrient "
+			+ "(recipe_nutrient_id, recipe_recipe_id, title, percentage)"
+			+ " VALUES "
+			+ "(?, ?, ?, ?)";
+				 */
+				query.setInt(1, nextNutrientId);
+				query.setInt(2, recipeId);
+				query.setString(3, nutrientName);
+				query.setInt(4, nutrientValue);
+				query.executeUpdate();
+				nextNutrientId++;
+			}
+			
+			query.close();
+			
+			
+		}
+		
+		return nextNutrientId;
 	}
 }
