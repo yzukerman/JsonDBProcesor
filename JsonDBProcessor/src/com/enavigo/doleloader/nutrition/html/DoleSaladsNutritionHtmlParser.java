@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,10 +27,13 @@ import org.xml.sax.SAXException;
  */
 public class DoleSaladsNutritionHtmlParser {
 	
-	public static HashMap<String, Object> parseNutritionalInformation(String sourceHtml) 
+	public static List<HashMap<String, Object>> parseNutritionalInformation(String sourceHtml) 
 							
 	{
-		HashMap<String, Object> result = new HashMap<String, Object>();
+		List<HashMap<String, Object>> nutrientResult = new ArrayList<HashMap<String, Object>>();
+		
+		HashMap<String, Object> topResult = new HashMap<String, Object>(); // top part of the label, containing constant values
+		HashMap<String, Object> bottomResult =  new HashMap<String, Object>(); 
 		try
 		{
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -41,12 +45,12 @@ public class DoleSaladsNutritionHtmlParser {
 			Node servingSizeNode = doc.getElementsByTagName("h6").item(0);
 			if (servingSizeNode != null)
 			{
-				result.put("serving_size", servingSizeNode.getTextContent().replace("Serving Size ", ""));
+				topResult.put("serving_size", servingSizeNode.getTextContent().replace("Serving Size ", ""));
 			}
 			Node servingsPerContainer = doc.getElementsByTagName("h7").item(0);
 			if (servingsPerContainer != null)
 			{
-				result.put("servings_per_container", servingsPerContainer.getTextContent().replace("Servings Per Container ", ""));
+				topResult.put("servings_per_container", servingsPerContainer.getTextContent().replace("Servings Per Container ", ""));
 			}
 			
 			
@@ -66,8 +70,8 @@ public class DoleSaladsNutritionHtmlParser {
 			int caloriesFromFat = getNumericValue(calorieList.item(3).getTextContent(), null);
 			if(calories >= 0)
 			{
-				result.put("calories", calories);
-				result.put("calories_from_fat", caloriesFromFat);
+				topResult.put("calories", calories);
+				topResult.put("calories_from_fat", caloriesFromFat);
 			}
 			
 			// fat
@@ -76,8 +80,8 @@ public class DoleSaladsNutritionHtmlParser {
 			int totalFatPercent = getNumericValue(totalFatStr, "%");
 			if(totalFat >= 0)
 			{
-				result.put("total_fat", totalFat);
-				result.put("total_fat_percent", totalFatPercent);
+				topResult.put("total_fat", totalFat);
+				topResult.put("total_fat_percent", totalFatPercent);
 			}
 			
 			// saturated fat
@@ -86,8 +90,8 @@ public class DoleSaladsNutritionHtmlParser {
 			int satFatPercent = getNumericValue(satFatStr, "%");
 			if(totalFat >= 0)
 			{
-				result.put("saturated_fat", satFat);
-				result.put("saturated_fat_percent", satFatPercent);
+				topResult.put("saturated_fat", satFat);
+				topResult.put("saturated_fat_percent", satFatPercent);
 			}
 			
 			// transfat
@@ -95,7 +99,7 @@ public class DoleSaladsNutritionHtmlParser {
 			int tFat = getNumericValue(satFatStr, "g");
 			if(tFat >= 0)
 			{
-				result.put("trans_fat", tFat);
+				topResult.put("trans_fat", tFat);
 			}
 			
 			// cholesterol
@@ -104,8 +108,8 @@ public class DoleSaladsNutritionHtmlParser {
 			int percentVal = getNumericValue(curStr, "%");
 			if(gramVal >= 0)
 			{
-				result.put("cholesterol_mg", gramVal);
-				result.put("cholesterol_percent", percentVal);
+				topResult.put("cholesterol_mg", gramVal);
+				topResult.put("cholesterol_percent", percentVal);
 			}
 			
 			// sodium
@@ -114,8 +118,8 @@ public class DoleSaladsNutritionHtmlParser {
 			percentVal = getNumericValue(curStr, "%");
 			if(gramVal >= 0)
 			{
-				result.put("sodium_mg", gramVal);
-				result.put("sodium_percent", percentVal);
+				topResult.put("sodium_mg", gramVal);
+				topResult.put("sodium_percent", percentVal);
 			}
 			
 			// potassium
@@ -124,8 +128,8 @@ public class DoleSaladsNutritionHtmlParser {
 			percentVal = getNumericValue(curStr, "%");
 			if(gramVal >= 0)
 			{
-				result.put("potassium_g", gramVal);
-				result.put("potassium_percent", percentVal);
+				topResult.put("potassium_g", gramVal);
+				topResult.put("potassium_percent", percentVal);
 			}	
 			// carbs
 			curStr = nutrientList.item(9).getTextContent();
@@ -133,8 +137,8 @@ public class DoleSaladsNutritionHtmlParser {
 			percentVal = getNumericValue(curStr, "%");
 			if(gramVal >= 0)
 			{
-				result.put("total_carbs", gramVal);
-				result.put("total_carbs_percent", percentVal);
+				topResult.put("total_carbs", gramVal);
+				topResult.put("total_carbs_percent", percentVal);
 			}
 			// fiber
 			curStr = nutrientList.item(10).getTextContent();
@@ -142,22 +146,22 @@ public class DoleSaladsNutritionHtmlParser {
 			percentVal = getNumericValue(curStr, "%");
 			if(gramVal >= 0)
 			{
-				result.put("dietary_fiber", gramVal);
-				result.put("dietary_fiber_percent", percentVal);
+				topResult.put("dietary_fiber", gramVal);
+				topResult.put("dietary_fiber_percent", percentVal);
 			}
 			// sugars
 			curStr = nutrientList.item(11).getTextContent();
 			gramVal = getNumericValue(curStr, "g");
 			if(gramVal >= 0)
 			{
-				result.put("sugars", gramVal);
+				topResult.put("sugars", gramVal);
 			}
 			// protein
 			curStr = nutrientList.item(12).getTextContent();
 			gramVal = getNumericValue(curStr, "g");
 			if(gramVal >= 0)
 			{
-				result.put("protein", gramVal);
+				topResult.put("protein", gramVal);
 			}
 			
 			String varNutrients = nutrientList.item(13).getTextContent().trim();
@@ -170,7 +174,7 @@ public class DoleSaladsNutritionHtmlParser {
 				{
 					nutPercent = Integer.parseInt(curNutrient.replaceAll("\\D", ""));
 					nutName = curNutrient.replaceAll("\\s\\d*%","").trim();
-					result.put(nutName, nutPercent);
+					bottomResult.put(nutName, nutPercent);
 				}
 			}
 			
@@ -180,9 +184,10 @@ public class DoleSaladsNutritionHtmlParser {
 			e.printStackTrace();
 		}
 		
+		nutrientResult.add(topResult);
+		nutrientResult.add(bottomResult);
 		
-		
-		return result;
+		return nutrientResult;
 	}
 	
 	/***
