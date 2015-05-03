@@ -48,6 +48,8 @@ public class Product {
 	private List<HashMap<String, String>> relatedRecipes;
 	private List<HashMap<String, String>> relatedProducts;
 	private List<HashMap<String, String>> relatedArticles;
+	private List<HashMap<String, Object>> nutrients = null;
+
 	
 	
 	public String[] getBenefits() {
@@ -56,7 +58,7 @@ public class Product {
 	public void setBenefits(String[] benefits) {
 		this.benefits = benefits;
 	}
-	public void setNutrients(List<HashMap<String, String>> nutrients) {
+	public void setNutrients(List<HashMap<String, Object>> nutrients) {
 		this.nutrients = nutrients;
 	}
 	public List<HashMap<String, String>> getRelatedArticles() {
@@ -65,7 +67,7 @@ public class Product {
 	public void setRelatedArticles(List<HashMap<String, String>> relatedArticles) {
 		this.relatedArticles = relatedArticles;
 	}
-	private List<HashMap<String, String>> nutrients = null;
+	
 	
 	public String getTitle() {
 		return title;
@@ -289,10 +291,10 @@ public class Product {
 	public void setRelatedProducts(List<HashMap<String, String>> relatedProducts) {
 		this.relatedProducts = relatedProducts;
 	}
-	public List<HashMap<String, String>> getNutrients() {
+	public List<HashMap<String, Object>> getNutrients() {
 		return nutrients;
 	}
-	public void setNutrient(List<HashMap<String, String>> nutrients) {
+	public void setNutrient(List<HashMap<String, Object>> nutrients) {
 		this.nutrients = nutrients;
 	}
 		

@@ -43,6 +43,8 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 				"product_benefit_id") + 1;
 		int nextRelatedArticleId = DoleJsonPersistenceUtils.getMaxId(connection, "product_related_article", 
 				"related_article_id") + 1;
+		int nextProductNutrientId = DoleJsonPersistenceUtils.getMaxId(connection, 
+				"product_nutrient", "product_nutrient_id") + 1;
 		for(Product p : products)
 		{
 			System.out.println("Persisting: " + p.getTitle());
@@ -57,6 +59,12 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 					nextRelatedArticleId);
 			nextProductBenefitId = persistBenefits(connection, p.getBenefits(), nextProductId, 
 					nextProductBenefitId);
+			if(p.getTitle().contains("Sunflower Crunch"))
+			{
+				System.out.println("This");
+			}
+			nextProductNutrientId = DoleJsonPersistenceUtils.persistNutrients(connection, p.getNutrients(), nextProductId, nextProductNutrientId, 
+					DoleJsonPersistenceUtils.NutrientType.PRODUCT);
 			nextProductId++;
 		}
 			
@@ -259,6 +267,7 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 		
 		return productBenefitId;
 	}
+	
 	
 	
 }

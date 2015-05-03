@@ -45,12 +45,13 @@ public class DoleSaladsNutritionHtmlParser {
 			Node servingSizeNode = doc.getElementsByTagName("h6").item(0);
 			if (servingSizeNode != null)
 			{
-				topResult.put("serving_size", servingSizeNode.getTextContent().replace("Serving Size ", ""));
+				topResult.put("serving_size", servingSizeNode.getTextContent().replace("Serving Size ", "")); 
 			}
 			Node servingsPerContainer = doc.getElementsByTagName("h7").item(0);
 			if (servingsPerContainer != null)
 			{
-				topResult.put("servings_per_container", servingsPerContainer.getTextContent().replace("Servings Per Container ", ""));
+				String spc = servingsPerContainer.getTextContent().replace("Servings Per Container ", "");
+				topResult.put("servings_per_container", getDoubleValue(spc, ""));
 			}
 			
 			

@@ -133,4 +133,33 @@ public class DoleLoaderConstants {
 			+ " VALUES "
 			+ "(?, ?, ?, ?)";
 	
+	public static String UPDATE_PRODUCT_NUTRIENTS = 
+			"UPDATE product SET "
+			+ "serving_size = ?, "
+			+ "calories_from_fat = ?, "
+			+ "calories = ?, "
+			+ "total_fat_grams = ?,"
+			+ "total_fat_percent = ?, "
+			+ "saturated_fat_grams = ?,"
+			+ "saturated_fat_percent = ?, "
+			+ "trans_fat_grams = ?, "
+			+ "cholesterol_mg = ?, "
+			+ "cholesterol_percent = ?,"
+			+ "sodium_mg = ?, "
+			+ "sodium_percent = ?, "
+			+ "total_carbs_grams = ?, "
+			+ "total_carbs_percent = ?, "
+			+ "fiber_grams = ?, "
+			+ "fiber_percent = ?,"
+			+ "protein_grams = ?, "
+			+ "sugars_grams = ?, "
+			+ "servings_per_container = ?"
+			+ " WHERE product_id = ?";
+	
+	public static String PRODUCT_INSERT_NUTRIENT = 
+			"INSERT INTO product_nutrient "
+			+ "(product_nutrient_id, product_product_id, title, percentage)"
+			+ " VALUES "
+			+ "(?, ?, ?, ?)";
+	
 }
