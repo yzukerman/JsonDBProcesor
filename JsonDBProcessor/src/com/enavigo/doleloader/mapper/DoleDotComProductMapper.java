@@ -43,6 +43,7 @@ public class DoleDotComProductMapper implements JsonMapper {
 				if (p != null)
 				{
 					System.out.println("Product: " + p.getTitle() + ", " + p.getUrl());
+
 					p.setNutrients( 
 							DoleDotComNutritionHtmlParser.parseNutritionalInformation(p.getNutritionlabelHtml()));
 					products.add(p);

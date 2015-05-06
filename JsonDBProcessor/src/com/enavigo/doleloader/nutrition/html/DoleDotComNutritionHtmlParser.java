@@ -77,14 +77,14 @@ public class DoleDotComNutritionHtmlParser {
 			topResult.put("calories_from_fat", value);
 			
 			// total fat
-			value = getNumericValue(tdNodes.item(4).getTextContent(), "g*");
-			topResult.put("total_fat", value);
+			Double dvalue = getDoubleValue(tdNodes.item(4).getTextContent(), "g*");
+			topResult.put("total_fat", dvalue);
 			value = getNumericValue(tdNodes.item(5).getTextContent(), "%");
 			topResult.put("total_fat_percent", value);
 			
 			// saturated fat
 			
-			Double dvalue = getDoubleValue(tdNodes.item(6).getTextContent(), "g*");
+			dvalue = getDoubleValue(tdNodes.item(6).getTextContent(), "g*");
 			topResult.put("saturated_fat", dvalue);
 			value = getNumericValue(tdNodes.item(7).getTextContent(), "%");
 			topResult.put("saturated_fat_percent", value);

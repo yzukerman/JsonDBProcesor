@@ -77,7 +77,7 @@ public class DoleSaladsNutritionHtmlParser {
 			
 			// fat
 			String totalFatStr = nutrientList.item(3).getTextContent();
-			int totalFat = getNumericValue(totalFatStr, "g*");
+			Double totalFat = getDoubleValue(totalFatStr, "g*");
 			int totalFatPercent = getNumericValue(totalFatStr, "%");
 			if(totalFat >= 0 || totalFatPercent >= 0)
 			{

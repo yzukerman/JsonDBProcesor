@@ -153,7 +153,9 @@ public class DoleLoaderConstants {
 			+ "fiber_percent = ?,"
 			+ "protein_grams = ?, "
 			+ "sugars_grams = ?, "
-			+ "servings_per_container = ?"
+			+ "servings_per_container = ?,"
+			+ "potassium_mg = ?, "
+			+ "potassium_percent = ? "
 			+ " WHERE product_id = ?";
 	
 	public static String PRODUCT_INSERT_NUTRIENT = 

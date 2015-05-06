@@ -81,7 +81,7 @@ public class DoleJsonPersistenceUtils {
 			Connection connection, Map<String, Object> nutrients, int recipeId, NutrientType type) 
 					throws SQLException
 	{
-		if (nutrients == null)
+		if (nutrients == null || nutrients.size() == 0)
 			return;
 		
 		System.out.println(nutrients);
@@ -118,9 +118,12 @@ public class DoleJsonPersistenceUtils {
 			query = connection.prepareStatement(DoleLoaderConstants.UPDATE_PRODUCT_NUTRIENTS);
 		
 		query.setString(1, (String)nutrients.get("serving_size")); 
-		query.setInt(2, (Integer)nutrients.get("calories_from_fat"));
+		if(nutrients.containsKey("calories_from_fat"))
+			query.setInt(2, (Integer)nutrients.get("calories_from_fat"));
+		else
+			query.setInt(2, -1);
 		query.setInt(3, (Integer)nutrients.get("calories"));
-		query.setInt(4, (Integer)nutrients.get("total_fat"));
+		query.setDouble(4, (Double)nutrients.get("total_fat"));
 		query.setInt(5, (Integer)nutrients.get("total_fat_percent"));
 		query.setDouble(6, (Double)nutrients.get("saturated_fat"));
 		query.setInt(7, (Integer)nutrients.get("saturated_fat_percent"));
@@ -142,10 +145,15 @@ public class DoleJsonPersistenceUtils {
 			query.setInt(18, sugars);
 		else
 			query.setInt(18, 0);
-		Double spc = (Double)nutrients.get("servings_per_container");
+		if (nutrients.containsKey("servings_per_container"))
+		{
+			Double spc = (Double)nutrients.get("servings_per_container");
 //		System.out.println("SPC: '" + spc + "'");
-		if(spc != null)
-			query.setDouble(19, (spc));
+			if(spc != null)
+				query.setDouble(19, (spc));
+			else
+				query.setDouble(19, 0);
+		}
 		else
 			query.setDouble(19, 0);
 		
