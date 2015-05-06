@@ -59,7 +59,7 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 					nextRelatedArticleId);
 			nextProductBenefitId = persistBenefits(connection, p.getBenefits(), nextProductId, 
 					nextProductBenefitId);
-			if(p.getTitle().contains("Sunflower Crunch"))
+			if(p.getTitle().contains("California Seedless Raisins"))
 			{
 				System.out.println("This");
 			}

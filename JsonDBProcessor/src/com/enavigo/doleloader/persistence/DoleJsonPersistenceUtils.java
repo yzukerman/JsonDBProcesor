@@ -64,6 +64,10 @@ public class DoleJsonPersistenceUtils {
 									int recipeId, int nextNutrientId, NutrientType type) 
 		throws SQLException
 	{
+		if(nutrients == null)
+		{
+			return nextNutrientId;
+		}
 		HashMap<String, Object> topNutrients = nutrients.get(0);
 		HashMap<String, Object> bottomNutrients = nutrients.get(1);
 		
@@ -113,7 +117,7 @@ public class DoleJsonPersistenceUtils {
 		else
 			query = connection.prepareStatement(DoleLoaderConstants.UPDATE_PRODUCT_NUTRIENTS);
 		
-		query.setString(1, (String)nutrients.get("serving_size"));
+		query.setString(1, (String)nutrients.get("serving_size")); 
 		query.setInt(2, (Integer)nutrients.get("calories_from_fat"));
 		query.setInt(3, (Integer)nutrients.get("calories"));
 		query.setInt(4, (Integer)nutrients.get("total_fat"));
