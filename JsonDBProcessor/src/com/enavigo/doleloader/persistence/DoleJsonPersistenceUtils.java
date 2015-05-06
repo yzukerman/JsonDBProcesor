@@ -99,15 +99,15 @@ public class DoleJsonPersistenceUtils {
 			+ "cholesterol_percent = ?,"
 			+ "sodium_mg = ?, "
 			+ "sodium_percent = ?, "
-			+ "potassium_grams = ?, "
-			+ "potassium_percent = ?,"
 			+ "total_carbs_grams = ?, "
 			+ "total_carbs_percent = ?, "
 			+ "fiber_grams = ?, "
 			+ "fiber_percent = ?,"
 			+ "protein_grams = ?, "
 			+ "sugars_grams = ?, "
-			+ "servings_per_container = ?"
+			+ "servings_per_container = ?,"
+			+ "potassium_grams = ?, "
+			+ "potassium_percent = ?"
 			+ " WHERE recipe_id = ?";
 	
 		 */
@@ -148,7 +148,26 @@ public class DoleJsonPersistenceUtils {
 			query.setDouble(19, (spc));
 		else
 			query.setDouble(19, 0);
-		query.setInt(20, recipeId);
+		
+		if(type == NutrientType.PRODUCT)
+		{
+			// potassium
+			if (nutrients.get("potassium_g") != null)
+				query.setInt(20, (Integer)nutrients.get("potassium_g"));
+			else
+				query.setNull(20, 0);
+			
+			if (nutrients.get("potassium_percent") != null)
+				query.setInt(21, (Integer)nutrients.get("potassium_percent"));
+			else
+				query.setNull(21, 0);
+		
+			query.setInt(22, recipeId);
+		}
+		else
+		{
+			query.setInt(20, recipeId);
+		}
 		
 		query.executeUpdate();
 		

@@ -114,6 +114,8 @@ public class DoleDotComNutritionHtmlParser {
 			
 			// potassium
 			value = getNumericValue(tdNodes.item(14).getTextContent(), "g");
+			if(value == -1)
+				value = getNumericValue(tdNodes.item(14).getTextContent(), "mg");
 			topResult.put("potassium_g", value);
 			value = getNumericValue(tdNodes.item(15).getTextContent(), "%");
 			topResult.put("potassium_percent", value);	
