@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.enavigo.doleloader.nutrition.html.DoleDotComNutritionHtmlParser;
+import com.enavigo.doleloader.nutrition.html.DoleSaladsCaNutritionHtmlParser;
 import com.enavigo.doleloader.pojo.Product;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -38,7 +40,9 @@ public class DoleSaladsCaProductMapper implements JsonMapper {
 			{
 				JsonNode productNode = productIterator.next();
 				System.out.println(productNode.get("title"));
-				products.add(processJson(productNode));
+				Product p = processJson(productNode);
+				p.setNutrients(DoleSaladsCaNutritionHtmlParser.parseNutritionalInformation(p.getNutritionlabelHtml()));
+				products.add(p);
 			}
 		}
 		return products;
