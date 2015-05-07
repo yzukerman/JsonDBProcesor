@@ -67,7 +67,7 @@ public class ExcelFileLoader {
 		topNutrients.put("recipeTitle", cell.getStringCellValue());
 		// serving size
 		cell = sheet.getRow(3).getCell(0);
-		
+		//String value -
 		
 		nutrients.add(topNutrients);
 		nutrients.add(bottomNutrients);
@@ -85,7 +85,9 @@ public class ExcelFileLoader {
 		//efl.processExcelFiles("/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Nutrition/nutritionLabels", null);
 		try
 		{
-			efl.processFile("/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Nutrition/nutritionLabels/Baker Beach Salad.xlsx");
+			List<HashMap<String, Object>> nutrients = 
+					efl.processFile("/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Nutrition/nutritionLabels/Baker Beach Salad.xlsx");
+			System.out.println(nutrients.get(0));
 		}
 		catch(InvalidFormatException ife)
 		{
