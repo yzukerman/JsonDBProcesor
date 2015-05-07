@@ -6,6 +6,8 @@ package com.enavigo.doleloader.nutrition.excel;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,13 +19,15 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.enavigo.doleloader.persistence.DoleJsonPersistenceUtils;
+
 /**
  * @author yuvalzukerman
  *
  */
 public class ExcelFileLoader {
 	
-	public int processExcelFiles(String folder, Connection connection)
+	public int processExcelFiles(String folder, Connection connection) throws SQLException, InvalidFormatException, IOException
 	{
 		int count = 0;
 		try
@@ -31,11 +35,13 @@ public class ExcelFileLoader {
     		// Open directory and iterate over files
 			File fileFolder = new File(folder);
 			String[] fileNames = fileFolder.list();
+			int nextNutrientId = DoleJsonPersistenceUtils.getMaxId(connection, "recipe_nutrient", "recipe_nutrient_id") +1;
+			
 			for(String curFile : fileNames)
 			{
-				System.out.println("File: " + curFile);
-//				List<HashMap<String, Object>> nutrients = processFile(curFile);
-//				persistNutrients(nutrients, connection);
+				System.out.println("Processing File: " + curFile);
+				List<HashMap<String, Object>> nutrients = processFile(curFile);
+				nextNutrientId = DoleJsonPersistenceUtils.presistExcelRecipeNutrients(connection, nutrients, nextNutrientId);
 				count++;
 			}
     	}
@@ -94,7 +100,7 @@ public class ExcelFileLoader {
 		// saturated fat
 		cell = sheet.getRow(11).getCell(1);
 		dvalue = cell.getNumericCellValue();
-		topNutrients.put("saturated_fat", (int)dvalue);
+		topNutrients.put("saturated_fat", dvalue);
 
 		cell = sheet.getRow(11).getCell(3);
 		dvalue = cell.getNumericCellValue();
@@ -113,7 +119,7 @@ public class ExcelFileLoader {
 		// mono fat
 		cell = sheet.getRow(14).getCell(1);
 		dvalue = cell.getNumericCellValue();
-		topNutrients.put("mono_fat", (int)dvalue);
+		topNutrients.put("mono_fat", dvalue);
 
 		// cholesterol
 		cell = sheet.getRow(15).getCell(1);
@@ -175,7 +181,6 @@ public class ExcelFileLoader {
 		// variable nutrients
 		for(int x = 23; sheet.getRow(x) != null; x++)
 		{
-			System.out.println("X: " + x);
 			nutName = sheet.getRow(x).getCell(0).getStringCellValue();
 			dvalue = sheet.getRow(x).getCell(3).getNumericCellValue();
 			bottomNutrients.put(nutName, (int)dvalue);
@@ -186,22 +191,22 @@ public class ExcelFileLoader {
 		return nutrients;
 	}
 	
-	
-	private void persistNutrients(List<HashMap<String, Object>> nutrients, Connection connection)
-	{
-		
-	}
 
 	public static void main(String[] args)
 	{
 		ExcelFileLoader efl = new ExcelFileLoader();
+		Connection connection = null;
 		//efl.processExcelFiles("/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Nutrition/nutritionLabels", null);
 		try
 		{
+			connection = DriverManager.getConnection("jdbc:mysql://localhost/dole_db?" +
+                    "user=root&password=ima711");
 			List<HashMap<String, Object>> nutrients = 
-					efl.processFile("/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Nutrition/nutritionLabels/Baker Beach Salad.xlsx");
-			System.out.println(nutrients.get(0));
-			System.out.println(nutrients.get(1));
+					efl.processFile("/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Nutrition/nutritionLabels/Banana Cranberry Bread.xlsx");
+//			System.out.println(nutrients.get(0));
+//			System.out.println(nutrients.get(1));
+			int nextNutrientId = DoleJsonPersistenceUtils.getMaxId(connection, "recipe_nutrient", "recipe_nutrient_id") +1; 
+			DoleJsonPersistenceUtils.presistExcelRecipeNutrients(connection, nutrients, nextNutrientId);
 		}
 		catch(InvalidFormatException ife)
 		{
@@ -212,6 +217,26 @@ public class ExcelFileLoader {
 		{
 			System.out.println("IOE: " + ioe.getLocalizedMessage());
 			ioe.printStackTrace();
+		}
+		catch(SQLException se)
+		{
+			System.out.println("SE: " + se.getLocalizedMessage());
+			se.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if (connection != null)
+				{
+					connection.close();
+					System.out.println("DB Connection closed");
+				}
+			}
+			catch(Exception e)
+			{
+				System.out.println("Issue closing DB connection: " + e.getMessage());
+			}
 		}
 	}
 }

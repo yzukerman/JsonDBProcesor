@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ import com.enavigo.doleloader.DoleLoaderConstants;
 public class DoleJsonPersistenceUtils {
 	
 	public enum NutrientType {
-		RECIPE, PRODUCT
+		RECIPE, PRODUCT, EXCEL
 	}
 
 	/***
@@ -85,6 +86,7 @@ public class DoleJsonPersistenceUtils {
 			return;
 		
 		System.out.println(nutrients);
+		
 		/*
 		 * "UPDATE recipe SET "
 			+ "serving_size = ?, "
@@ -217,6 +219,108 @@ public class DoleJsonPersistenceUtils {
 			query.close();
 			
 			
+		}
+		
+		return nextNutrientId;
+	}
+	
+	private static void persistExcelTopNutrients(
+			Connection connection, Map<String, Object> nutrients) 
+					throws SQLException
+	{
+		
+		PreparedStatement query =  null;
+		query = connection.prepareStatement(DoleLoaderConstants.UPDATE_EXCEL_RECIPE_NUTRIENTS);
+		
+		/*
+		 *"UPDATE recipe SET "
+			+ "serving_size = ?, "
+			+ "calories_from_fat = ?, "
+			+ "calories = ?, "
+			+ "total_fat_grams = ?,"
+			+ "total_fat_percent = ?, "
+			+ "saturated_fat_grams = ?,"
+			+ "saturated_fat_percent = ?, "
+			+ "trans_fat_grams = ?, "
+			+ "cholesterol_mg = ?, "
+			+ "cholesterol_percent = ?,"
+			+ "sodium_mg = ?, "
+			+ "sodium_percent = ?, "
+			+ "total_carbs_grams = ?, "
+			+ "total_carbs_percent = ?, "
+			+ "fiber_grams = ?, "
+			+ "fiber_percent = ?,"
+			+ "protein_grams = ?, "
+			+ "sugars_grams = ?, "
+			+ "polyunsat_fat_grams = ?, "
+			+ "monounsat_fat_grams = ?, "
+			+ "potassium_grams = ?, "
+			+ "potassium_percent = ? "
+			+ " WHERE title = ?";
+		 */
+		query.setString(1, (String)nutrients.get("serving_size")); 
+		if(nutrients.containsKey("calories_from_fat"))
+			query.setInt(2, (Integer)nutrients.get("calories_from_fat"));
+		else
+			query.setInt(2, -1);
+		query.setInt(3, (Integer)nutrients.get("calories"));
+		query.setInt(4, (Integer)nutrients.get("total_fat"));
+		query.setInt(5, (Integer)nutrients.get("total_fat_percentage"));
+		query.setDouble(6, (Double)nutrients.get("saturated_fat"));
+		query.setInt(7, (Integer)nutrients.get("saturated_fat_percentage"));
+		if(nutrients.get("trans_fat") != null)
+			query.setInt(8, (Integer)nutrients.get("trans_fat"));
+		else
+			query.setInt(8, 0);
+		query.setInt(9, (Integer)nutrients.get("cholesterol"));
+		query.setInt(10, (Integer)nutrients.get("cholesterol_percentage"));
+		query.setInt(11, (Integer)nutrients.get("sodium"));
+		query.setInt(12, (Integer)nutrients.get("sodium_percentage"));
+		query.setInt(13, (Integer)nutrients.get("carbs"));
+		query.setInt(14, (Integer)nutrients.get("carbs_percentage"));
+		query.setInt(15, (Integer)nutrients.get("fiber"));
+		query.setInt(16, (Integer)nutrients.get("fiber_percentage"));
+		query.setInt(17, (Integer)nutrients.get("protein"));
+		query.setInt(18, (Integer)nutrients.get("sugars"));
+		query.setDouble(19, (Double)nutrients.get("poly_fat"));
+		query.setDouble(20, (Double)nutrients.get("mono_fat"));
+		query.setInt(21, (Integer)nutrients.get("potassium"));
+		query.setInt(22, (Integer)nutrients.get("potassium_percentage"));
+		query.setString(23, (String)nutrients.get("recipeTitle"));
+	}
+	
+	public static int presistExcelRecipeNutrients(Connection connection, 
+													List<HashMap<String, Object>> nutrients, 
+													int nextNutrientId) 
+													throws SQLException
+	{
+		
+		HashMap<String, Object> topNutrients = nutrients.get(0);
+		HashMap<String, Object> bottomNutrients = nutrients.get(1);
+		
+		persistExcelTopNutrients(connection, topNutrients);
+
+		// get recipe ids
+		PreparedStatement query = connection.prepareStatement(DoleLoaderConstants.GET_RECIPE_IDS_FOR_TITLE);
+		query.setString(1, (String)topNutrients.get("recipeTitle"));
+		
+		ResultSet rs = query.executeQuery();
+
+		List<Integer> recipeIds = new LinkedList<Integer>();
+		while(rs.next())
+		{
+			recipeIds.add(new Integer(rs.getInt("recipe_id")));
+		}
+		rs.close();
+		query.close();
+		
+		if(recipeIds.isEmpty())
+			System.out.println("MISSING RECIPE: " + (String)topNutrients.get("recipeTitle"));
+		
+		for(Integer recipeId : recipeIds)
+		{
+			persistBottomNutrients(connection, bottomNutrients, recipeId.intValue(), nextNutrientId, NutrientType.RECIPE);
+			nextNutrientId++ ;
 		}
 		
 		return nextNutrientId;

@@ -164,4 +164,33 @@ public class DoleLoaderConstants {
 			+ " VALUES "
 			+ "(?, ?, ?, ?)";
 	
+	public static String UPDATE_EXCEL_RECIPE_NUTRIENTS = 
+			"UPDATE recipe SET "
+			+ "serving_size = ?, "
+			+ "calories_from_fat = ?, "
+			+ "calories = ?, "
+			+ "total_fat_grams = ?,"
+			+ "total_fat_percent = ?, "
+			+ "saturated_fat_grams = ?,"
+			+ "saturated_fat_percent = ?, "
+			+ "trans_fat_grams = ?, "
+			+ "cholesterol_mg = ?, "
+			+ "cholesterol_percent = ?,"
+			+ "sodium_mg = ?, "
+			+ "sodium_percent = ?, "
+			+ "total_carbs_grams = ?, "
+			+ "total_carbs_percent = ?, "
+			+ "fiber_grams = ?, "
+			+ "fiber_percent = ?,"
+			+ "protein_grams = ?, "
+			+ "sugars_grams = ?, "
+			+ "polyunsat_fat_grams = ?, "
+			+ "monounsat_fat_grams = ?, "
+			+ "potassium_grams = ?, "
+			+ "potassium_percent = ? "
+			+ " WHERE title = ?";
+	
+	public static String GET_RECIPE_IDS_FOR_TITLE = 
+			"SELECT recipe_id FROM recipe WHERE title = ?";
+	
 }
