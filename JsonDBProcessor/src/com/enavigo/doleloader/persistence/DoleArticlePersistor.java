@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.enavigo.doleloader.DoleLoaderConstants;
 import com.enavigo.doleloader.pojo.Article;
@@ -14,7 +15,8 @@ import com.enavigo.doleloader.pojo.Recipe;
 public class DoleArticlePersistor implements DoleJsonPersistor {
 	
 	Connection connection = null;
-
+	private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	
 	@Override
 	public boolean persist(Connection connection, Object objToPersist,
 			char sourceSite) throws SQLException {
@@ -59,7 +61,7 @@ public class DoleArticlePersistor implements DoleJsonPersistor {
 			+ "category, byline, source_site, url, image_url, publish_date, subhead"
 		 */
 		
-		//System.out.println("Persisting recipe: " + r.getTitle());
+		logger.fine("Persisting recipe: " + a.getTitle());
 		
 		
 		PreparedStatement query = 

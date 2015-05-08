@@ -41,7 +41,6 @@ public class DoleSaladsNutritionHtmlParser {
 			dbf.setValidating(false);
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document doc = db.parse(new ByteArrayInputStream(sourceHtml.getBytes()));
-			System.out.println("Parsed");
 			Node servingSizeNode = doc.getElementsByTagName("h6").item(0);
 			if (servingSizeNode != null)
 			{
@@ -56,8 +55,6 @@ public class DoleSaladsNutritionHtmlParser {
 			
 			
 			NodeList nutrientList = doc.getElementsByTagName("li");
-			for(int x = 0; x < nutrientList.getLength(); x++)
-				System.out.println("Node " + x + " value: '" + nutrientList.item(x).getTextContent() +"'");
 			
 //			for(int x = 0; x < nutrientList.item(1).getChildNodes().getLength(); x++)
 //			{

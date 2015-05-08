@@ -69,7 +69,6 @@ public class DBLoader {
 		
 			// set up logging
 			fileTxt = new FileHandler(DBLoader.class.getName() + ".log");
-			LOGGER.setLevel(Level.INFO); 
 			fileTxt.setFormatter(new SimpleFormatter());
 			LOGGER.addHandler(fileTxt);
 			
@@ -107,6 +106,7 @@ public class DBLoader {
 				{
 					connection.close();
 					System.out.println("DB Connection closed");
+
 				}
 			}
 			catch(Exception e)

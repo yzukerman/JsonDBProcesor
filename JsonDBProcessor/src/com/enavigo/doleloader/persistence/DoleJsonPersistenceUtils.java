@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import com.enavigo.doleloader.DoleLoaderConstants;
 
@@ -20,6 +21,8 @@ import com.enavigo.doleloader.DoleLoaderConstants;
  *
  */
 public class DoleJsonPersistenceUtils {
+	
+	private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	public enum NutrientType {
 		RECIPE, PRODUCT, EXCEL
@@ -85,7 +88,7 @@ public class DoleJsonPersistenceUtils {
 		if (nutrients == null || nutrients.size() == 0)
 			return;
 		
-		System.out.println(nutrients);
+		logger.fine(nutrients.toString());
 		
 		/*
 		 * "UPDATE recipe SET "
@@ -287,6 +290,10 @@ public class DoleJsonPersistenceUtils {
 		query.setInt(21, (Integer)nutrients.get("potassium"));
 		query.setInt(22, (Integer)nutrients.get("potassium_percentage"));
 		query.setString(23, (String)nutrients.get("recipeTitle"));
+		
+		int affectedRows = query.executeUpdate();
+		logger.fine("Updated " + affectedRows + " recipes titled " + (String)nutrients.get("recipeTitle"));
+		query.close();
 	}
 	
 	public static int presistExcelRecipeNutrients(Connection connection, 

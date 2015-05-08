@@ -18,6 +18,7 @@ import java.util.List;
 
 
 import java.util.Locale;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -26,6 +27,8 @@ import com.enavigo.doleloader.pojo.Recipe;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class NewsletterArticleMapper implements JsonMapper {
+	
+	private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	@Override
 	public Object mapJson(JsonNode tree) {
@@ -60,7 +63,8 @@ public class NewsletterArticleMapper implements JsonMapper {
 		Article article = new Article();
 		String title = node.get("title").asText();
 		article.setTitle(title);
-		System.out.println("Article title:" + title);
+		
+		logger.fine("Article title:" + title);
 		article.setUrl(node.get("page_url").asText());
 		DateFormat format = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
 		String dateString = node.get("publish_date").asText();

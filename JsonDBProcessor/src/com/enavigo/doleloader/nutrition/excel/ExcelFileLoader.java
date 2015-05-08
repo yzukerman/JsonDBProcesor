@@ -79,10 +79,12 @@ public class ExcelFileLoader {
 		XSSFSheet sheet = wb.getSheetAt(0);
 		Row row = sheet.getRow(0);
 		Cell cell = row.getCell(0);
+		int offset = 0;
 		
 		// sanity check - cell A23 needs to be blank
 		if(sheet.getRow(22) != null)
 		{
+			wb.close();
 			return null;
 		}
 		
@@ -136,7 +138,8 @@ public class ExcelFileLoader {
 		cell = sheet.getRow(14).getCell(1);
 		dvalue = cell.getNumericCellValue();
 		topNutrients.put("mono_fat", dvalue);
-
+	
+		
 		// cholesterol
 		cell = sheet.getRow(15).getCell(1);
 		dvalue = cell.getNumericCellValue();
@@ -204,6 +207,7 @@ public class ExcelFileLoader {
 			bottomNutrients.put(nutName, (int)dvalue);
 		}
 		
+		wb.close();
 		nutrients.add(topNutrients);
 		nutrients.add(bottomNutrients);
 		return nutrients;

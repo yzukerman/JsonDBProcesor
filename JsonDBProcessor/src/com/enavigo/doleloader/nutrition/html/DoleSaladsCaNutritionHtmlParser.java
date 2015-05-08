@@ -42,7 +42,6 @@ public class DoleSaladsCaNutritionHtmlParser {
 			dbf.setValidating(false);
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document doc = db.parse(new ByteArrayInputStream(sourceHtml.getBytes()));
-			System.out.println("Parsed");
 			
 			// servings
 			Node pNode = doc.getElementsByTagName("p").item(0);

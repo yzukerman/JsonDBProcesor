@@ -9,6 +9,8 @@ import java.util.List;
 
 
 
+import java.util.logging.Logger;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,6 +18,8 @@ import com.enavigo.doleloader.pojo.Recipe;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class NewsletterRecipeMapper implements JsonMapper {
+	
+	private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	@Override
 	public Object mapJson(JsonNode tree) {
@@ -48,8 +52,9 @@ public class NewsletterRecipeMapper implements JsonMapper {
 	{
 		Recipe recipe = new Recipe();
 		String title = node.get("title").asText();
+		title = title.replaceAll("\\.", "");
 		recipe.setTitle(title);
-		System.out.println("Recipe title:" + title);
+		logger.fine("Recipe title:" + title);
 		recipe.setUrl(node.get("page_url").asText());
 		recipe.setCategory(node.get("category").asText());
 //		recipe.setSubcategory(subCategory);

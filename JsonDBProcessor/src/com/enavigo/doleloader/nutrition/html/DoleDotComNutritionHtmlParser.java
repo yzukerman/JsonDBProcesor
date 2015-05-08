@@ -44,10 +44,8 @@ public class DoleDotComNutritionHtmlParser {
 			dbf.setValidating(false);
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document doc = db.parse(new ByteArrayInputStream(sourceHtml.getBytes()));
-			System.out.println("Parsed");
 			
 			NodeList spans = doc.getElementsByTagName("span");
-			System.out.println("Span:" + spans.item(2).getTextContent());
 			if(spans.item(2).getChildNodes().getLength() > 3) return null;
 			String servingsLine = spans.item(2).getTextContent();
 			if(servingsLine != null)
@@ -150,7 +148,6 @@ public class DoleDotComNutritionHtmlParser {
 			for(String curNutrient : varStrs)
 			{
 				curNutrient = curNutrient.trim();
-				System.out.println("CurNutrients: '"+ curNutrient + "'");
 				if(curNutrient.length() > 1)
 				{
 					nutPercent = Integer.parseInt(curNutrient.replaceAll("\\D", ""));

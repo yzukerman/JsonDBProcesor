@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import com.enavigo.doleloader.DoleLoaderConstants;
 import com.enavigo.doleloader.pojo.Product;
@@ -14,6 +15,7 @@ import com.enavigo.doleloader.pojo.Recipe;
 public class DoleRecipePersistor implements DoleJsonPersistor {
 	
 	Connection connection = null;
+	private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	@Override
 	public boolean persist(Connection connection, Object objToPersist,
@@ -78,7 +80,7 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 			+ "difficulty_value, image_url, vegetable_servings, nutrition_facts_html
 		 */
 		
-		System.out.println("Persisting recipe: " + r.getTitle());
+		logger.fine("Persisting recipe: " + r.getTitle());
 		
 		
 		PreparedStatement query = 
@@ -110,9 +112,7 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 		}
 		catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException micve)
 		{
-			
-			System.out.println("Duplicate: " + micve.getLocalizedMessage());
-			System.out.println(r.getUrl());
+			logger.warning("Duplicate: " + micve.getLocalizedMessage() + "\n" + r.getUrl());
 			return false;
 		}
 		
