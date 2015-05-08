@@ -319,8 +319,7 @@ public class DoleJsonPersistenceUtils {
 		
 		for(Integer recipeId : recipeIds)
 		{
-			persistBottomNutrients(connection, bottomNutrients, recipeId.intValue(), nextNutrientId, NutrientType.RECIPE);
-			nextNutrientId++ ;
+			nextNutrientId = persistBottomNutrients(connection, bottomNutrients, recipeId.intValue(), nextNutrientId, NutrientType.RECIPE);
 		}
 		
 		return nextNutrientId;

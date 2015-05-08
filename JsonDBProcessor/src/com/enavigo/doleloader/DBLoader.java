@@ -12,6 +12,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,19 +25,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.enavigo.doleloader.mapper.DoleSaladsCaProductMapper;
 import com.enavigo.doleloader.mapper.JsonMapper;
+import com.enavigo.doleloader.nutrition.excel.ExcelFileLoader;
 import com.enavigo.doleloader.persistence.DoleJsonPersistor;
 import com.enavigo.doleloader.pojo.Product;
 
 public class DBLoader {
 	
 
+	// logging
+	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); 
+	static private FileHandler fileTxt;
+	
 	public static void main(String[] args) {
 			
 		
 		ObjectMapper mapper = new ObjectMapper();
 		Connection connection = null;
 		List<HashMap<String, String>> tasks = null;
+		ExcelFileLoader excelFileLoader = null;
 		
+
 		// load tasks from config file
 		try
 		{
@@ -54,6 +66,12 @@ public class DBLoader {
 			connection = DriverManager.getConnection("jdbc:mysql://localhost/dole_db?" +
 				                                   "user=root&password=ima711");
 			System.out.println("DB Connection established...");
+		
+			// set up logging
+			fileTxt = new FileHandler(DBLoader.class.getName() + ".log");
+			LOGGER.setLevel(Level.INFO); 
+			fileTxt.setFormatter(new SimpleFormatter());
+			LOGGER.addHandler(fileTxt);
 			
 			for(HashMap<String, String> task : tasks)
 			{
@@ -71,6 +89,9 @@ public class DBLoader {
 				
 				System.out.println("Step: " + task.get("name") + " DONE. ");
 			}
+			
+			excelFileLoader = new ExcelFileLoader();
+			excelFileLoader.processExcelFiles("/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Nutrition/nutritionLabels/", connection);
 			
 			
         } catch (Exception ex) {
@@ -104,8 +125,8 @@ public class DBLoader {
 		
 			Path currentRelativePath = Paths.get("");
 			String s = currentRelativePath.toAbsolutePath().toString();
-			//JsonNode taskTree = mapper.readTree(new File("./config/dole-config.json"));
-			JsonNode taskTree = mapper.readTree(new File("./config/dole-salads.json"));
+			JsonNode taskTree = mapper.readTree(new File("./config/dole-config.json"));
+			//JsonNode taskTree = mapper.readTree(new File("./config/dole-salads-ca-products.json"));
 			
 			JsonNode taskList = taskTree.get("tasks");
 			Iterator<JsonNode> taskIterator = taskList.elements();

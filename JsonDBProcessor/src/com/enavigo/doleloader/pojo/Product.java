@@ -23,7 +23,7 @@ public class Product {
 	private int servingsPerContainer = 0;
 	private int calories = 0;
 	private int caloriesFromFat = 0;
-	private int totalFatGrams = 0;
+	private double totalFatGrams = 0;
 	private int totalFatPercent = 0;
 	private int saturatedFatGrams = 0;
 	private int saturatedFatPercent = 0;
@@ -153,10 +153,10 @@ public class Product {
 	public void setCaloriesFromFat(int caloriesFromFat) {
 		this.caloriesFromFat = caloriesFromFat;
 	}
-	public int getTotalFatGrams() {
+	public double getTotalFatGrams() {
 		return totalFatGrams;
 	}
-	public void setTotalFatGrams(int totalFatGrams) {
+	public void setTotalFatGrams(double totalFatGrams) {
 		this.totalFatGrams = totalFatGrams;
 	}
 	public int getTotalFatPercent() {

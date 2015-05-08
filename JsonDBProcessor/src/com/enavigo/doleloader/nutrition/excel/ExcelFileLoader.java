@@ -11,7 +11,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
@@ -27,6 +30,9 @@ import com.enavigo.doleloader.persistence.DoleJsonPersistenceUtils;
  */
 public class ExcelFileLoader {
 	
+	private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+	
 	public int processExcelFiles(String folder, Connection connection) throws SQLException, InvalidFormatException, IOException
 	{
 		int count = 0;
@@ -40,8 +46,14 @@ public class ExcelFileLoader {
 			for(String curFile : fileNames)
 			{
 				System.out.println("Processing File: " + curFile);
-				List<HashMap<String, Object>> nutrients = processFile(curFile);
-				nextNutrientId = DoleJsonPersistenceUtils.presistExcelRecipeNutrients(connection, nutrients, nextNutrientId);
+				List<HashMap<String, Object>> nutrients = processFile(folder+curFile);
+				if(nutrients != null)
+					nextNutrientId = DoleJsonPersistenceUtils.presistExcelRecipeNutrients(connection, nutrients, nextNutrientId);
+				else
+				{
+					System.out.println("Bad source file: " + curFile);
+					logger.warning("Bad source file: " + curFile);
+				}
 				count++;
 			}
     	}
@@ -65,11 +77,15 @@ public class ExcelFileLoader {
 		OPCPackage pkg = OPCPackage.open(new File(filename));
 		XSSFWorkbook wb = new XSSFWorkbook(pkg);
 		XSSFSheet sheet = wb.getSheetAt(0);
-		System.out.println(sheet.getSheetName());
 		Row row = sheet.getRow(0);
 		Cell cell = row.getCell(0);
 		
-		System.out.println(cell.getStringCellValue());
+		// sanity check - cell A23 needs to be blank
+		if(sheet.getRow(22) != null)
+		{
+			return null;
+		}
+		
 		topNutrients.put("recipeTitle", cell.getStringCellValue());
 		
 		// serving size
@@ -154,8 +170,11 @@ public class ExcelFileLoader {
 		topNutrients.put("carbs", (int)dvalue);
 
 		cell = sheet.getRow(18).getCell(3);
-		dvalue = cell.getNumericCellValue();
-		topNutrients.put("carbs_percentage", (int)dvalue);
+		if(cell != null)
+		{	
+			dvalue = cell.getNumericCellValue();
+			topNutrients.put("carbs_percentage", (int)dvalue);
+		}
 
 		// fiber
 		cell = sheet.getRow(19).getCell(1);
@@ -177,7 +196,6 @@ public class ExcelFileLoader {
 		topNutrients.put("protein", (int)dvalue);
 
 		String nutName = null;
-		System.out.println(sheet.getRow(23).getCell(0).getCellType());
 		// variable nutrients
 		for(int x = 23; sheet.getRow(x) != null; x++)
 		{
@@ -201,12 +219,15 @@ public class ExcelFileLoader {
 		{
 			connection = DriverManager.getConnection("jdbc:mysql://localhost/dole_db?" +
                     "user=root&password=ima711");
+			efl.processExcelFiles("/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Nutrition/nutritionLabels/", connection);
+			/*
 			List<HashMap<String, Object>> nutrients = 
-					efl.processFile("/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Nutrition/nutritionLabels/Banana Cranberry Bread.xlsx");
+					efl.processFile("/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Nutrition/nutritionLabels/All-American Turkey Meatloaf.xlsx");
 //			System.out.println(nutrients.get(0));
 //			System.out.println(nutrients.get(1));
 			int nextNutrientId = DoleJsonPersistenceUtils.getMaxId(connection, "recipe_nutrient", "recipe_nutrient_id") +1; 
 			DoleJsonPersistenceUtils.presistExcelRecipeNutrients(connection, nutrients, nextNutrientId);
+			*/
 		}
 		catch(InvalidFormatException ife)
 		{
