@@ -2,6 +2,7 @@ package com.enavigo.doleloader.persistence;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -32,13 +33,16 @@ public class DoleArticlePersistor implements DoleJsonPersistor {
 		
 		for(Article article : articles)
 		{
-			persistArticle(connection, article, nextArticleId, sourceSite);
-			nextArticleRecipeId = persistRelatedRecipes(connection, 
-					article.getRelatedRecipes(), nextArticleId, nextArticleRecipeId);
-			nextArticleTagId = persistArticleTags(connection, 
-					article.getTags(), nextArticleId, nextArticleTagId);
-			
-			nextArticleId++;
+			if(!(articleExists(connection, article.getUrl())))
+			{
+				persistArticle(connection, article, nextArticleId, sourceSite);
+				nextArticleRecipeId = persistRelatedRecipes(connection, 
+						article.getRelatedRecipes(), nextArticleId, nextArticleRecipeId);
+				nextArticleTagId = persistArticleTags(connection, 
+						article.getTags(), nextArticleId, nextArticleTagId);
+				
+				nextArticleId++;
+			}
 		}
 				
 		return false;
@@ -155,6 +159,30 @@ public class DoleArticlePersistor implements DoleJsonPersistor {
 		}
 		
 		return tagId; 
+	}
+	
+	/**
+	 * Checks whether an article already exists in the database by comparing its URL to all existing articles
+	 * @param connection The database connection
+	 * @param articleUrl The URL of the article we're checking for existence.
+	 * @return true if the article already exists; false otherwise
+	 * @throws SQLException
+	 */
+	private boolean articleExists(Connection connection, String articleUrl) throws SQLException
+	{
+		boolean doesArticleExist = false;
+		
+		PreparedStatement query = 
+				connection.prepareStatement(DoleLoaderConstants.GET_ARTICLE_FOR_URL);
+		query.setString(1, articleUrl);
+		ResultSet r = query.executeQuery();
+		if(r.next())
+		{
+			doesArticleExist = true;
+		}
+		query.close();
+		
+		return doesArticleExist;
 	}
 	
 

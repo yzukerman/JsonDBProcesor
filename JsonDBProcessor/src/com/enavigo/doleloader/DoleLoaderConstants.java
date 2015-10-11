@@ -193,4 +193,24 @@ public class DoleLoaderConstants {
 	public static String GET_RECIPE_IDS_FOR_TITLE = 
 			"SELECT recipe_id FROM recipe WHERE title = ?";
 	
+	
+	public static String GET_ARTICLE_FOR_URL =
+			"SELECT article_id FROM article WHERE url = ?";
+	
+	public static String GET_RECIPE_FOR_URL =
+			"SELECT recipe_id FROM recipe WHERE url = ?";
+	
+	public static String GET_PRODUCT_FOR_URL = 
+			"SELECT product_id FROM product WHERE url = ?";
+	
+	public static String GET_RELEASE_FOR_URL = 
+			"SELECT release_id FROM press_release WHERE url = ?";
+	
+	public static String INSERT_PRESS_RELEASE = 
+			"INSERT INTO press_release (release_id, title, url, body_html, body_text, publish_date, source_site_id) "
+			+ " VALUES "
+			+ " (?, ?, ?, ?, ?, ?, ?)";
+	
+	
+	
 }

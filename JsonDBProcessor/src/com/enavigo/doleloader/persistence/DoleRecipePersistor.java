@@ -2,6 +2,7 @@ package com.enavigo.doleloader.persistence;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -42,19 +43,22 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 		
 		for(Recipe recipe : recipes)
 		{
-			boolean success = persistRecipe(connection, recipe, nextRecipeId, sourceSite);
-			if(!success)
-				continue;
-			nextRelatedRecipeId = persistRelatedRecipe(connection, 
-					recipe.getRelatedRecipes(), nextRecipeId, nextRelatedRecipeId);
-			recipeStepIds = persistRecipeSteps(connection, 
-					recipe.getRecipeSteps(), nextRecipeId, recipeStepIds);
-			nextRecipeIngredientId = persistIngredients(connection,
-					recipe.getIngredients(), nextRecipeId, nextRecipeIngredientId);
-			nextRecipeNutrientId = DoleJsonPersistenceUtils.persistNutrients(connection, recipe.getNutrients(), nextRecipeId, nextRecipeNutrientId, 
-					DoleJsonPersistenceUtils.NutrientType.RECIPE); 
-					//persistNutrients(connection, recipe.getNutrients(), nextRecipeId, nextRecipeNutrientId);
-			nextRecipeId++;
+			if(!recipeExists(connection, recipe.getUrl()))
+			{
+				boolean success = persistRecipe(connection, recipe, nextRecipeId, sourceSite);
+				if(!success)
+					continue;
+				nextRelatedRecipeId = persistRelatedRecipe(connection, 
+						recipe.getRelatedRecipes(), nextRecipeId, nextRelatedRecipeId);
+				recipeStepIds = persistRecipeSteps(connection, 
+						recipe.getRecipeSteps(), nextRecipeId, recipeStepIds);
+				nextRecipeIngredientId = persistIngredients(connection,
+						recipe.getIngredients(), nextRecipeId, nextRecipeIngredientId);
+				nextRecipeNutrientId = DoleJsonPersistenceUtils.persistNutrients(connection, recipe.getNutrients(), nextRecipeId, nextRecipeNutrientId, 
+						DoleJsonPersistenceUtils.NutrientType.RECIPE); 
+						//persistNutrients(connection, recipe.getNutrients(), nextRecipeId, nextRecipeNutrientId);
+				nextRecipeId++;
+			}
 		}
 		
 		return false;
@@ -248,6 +252,30 @@ public class DoleRecipePersistor implements DoleJsonPersistor {
 		
 		return ingredientId;
 		
+	}
+	
+	/**
+	 * Checks whether an recipe already exists in the database by comparing its URL to all existing recipes
+	 * @param connection The database connection
+	 * @param recipeUrl The URL of the recipe we're checking for existence.
+	 * @return true if the recipe already exists; false otherwise
+	 * @throws SQLException
+	 */
+	private boolean recipeExists(Connection connection, String recipeUrl) throws SQLException
+	{
+		boolean doesRecipeExist = false;
+		
+		PreparedStatement query = 
+				connection.prepareStatement(DoleLoaderConstants.GET_RECIPE_FOR_URL);
+		query.setString(1, recipeUrl);
+		ResultSet r = query.executeQuery();
+		if(r.next())
+		{
+			doesRecipeExist = true;
+		}
+		query.close();
+		
+		return doesRecipeExist;
 	}
 
 }

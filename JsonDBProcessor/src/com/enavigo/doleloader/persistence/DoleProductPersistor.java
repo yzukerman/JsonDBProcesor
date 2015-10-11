@@ -47,25 +47,30 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 				"product_nutrient", "product_nutrient_id") + 1;
 		for(Product p : products)
 		{
-			System.out.println("Persisting: " + p.getTitle());
-			persistProduct(connection, p, nextProductId, sourceSite);
-			nextRelatedRecipeId = persistRelatedRecipe(connection, p.getRelatedRecipes(), nextProductId, 
-								nextRelatedRecipeId);
-			nextIngredientId = persistIngredients(connection, p.getIngredients(), nextProductId, 
-								nextIngredientId);
-			nextRelatedProductId = persistRelatedProducts(connection, p.getRelatedProducts(), nextProductId, 
-					nextRelatedProductId);
-			nextRelatedArticleId = persistRelatedArticles(connection, p.getRelatedArticles(), nextProductId, 
-					nextRelatedArticleId);
-			nextProductBenefitId = persistBenefits(connection, p.getBenefits(), nextProductId, 
-					nextProductBenefitId);
-			if(p.getTitle().contains("California Seedless Raisins"))
+			if(!(productExists(connection, p.getUrl())))
 			{
-				System.out.println("This");
+				System.out.println("Persisting: " + p.getTitle());
+				persistProduct(connection, p, nextProductId, sourceSite);
+				nextRelatedRecipeId = persistRelatedRecipe(connection, p.getRelatedRecipes(), nextProductId, 
+									nextRelatedRecipeId);
+				nextIngredientId = persistIngredients(connection, p.getIngredients(), nextProductId, 
+									nextIngredientId);
+				nextRelatedProductId = persistRelatedProducts(connection, p.getRelatedProducts(), nextProductId, 
+						nextRelatedProductId);
+				nextRelatedArticleId = persistRelatedArticles(connection, p.getRelatedArticles(), nextProductId, 
+						nextRelatedArticleId);
+				nextProductBenefitId = persistBenefits(connection, p.getBenefits(), nextProductId, 
+						nextProductBenefitId);
+				if(p.getTitle().contains("California Seedless Raisins"))
+				{
+					System.out.println("This");
+				}
+				nextProductNutrientId = DoleJsonPersistenceUtils.persistNutrients(connection, p.getNutrients(), nextProductId, nextProductNutrientId, 
+						DoleJsonPersistenceUtils.NutrientType.PRODUCT);
+				nextProductId++;
 			}
-			nextProductNutrientId = DoleJsonPersistenceUtils.persistNutrients(connection, p.getNutrients(), nextProductId, nextProductNutrientId, 
-					DoleJsonPersistenceUtils.NutrientType.PRODUCT);
-			nextProductId++;
+			else
+				System.out.println("Skipped product " + p.getTitle());
 		}
 			
 		
@@ -269,5 +274,29 @@ public class DoleProductPersistor implements DoleJsonPersistor {
 	}
 	
 	
+	/**
+	 * Checks whether an product already exists in the database by comparing its URL to all existing products
+	 * @param connection The database connection
+	 * @param productUrl The URL of the product we're checking for existence.
+	 * @return true if the product already exists; false otherwise
+	 * @throws SQLException
+	 */
+	private boolean productExists(Connection connection, String productUrl) throws SQLException
+	{
+		boolean doesProductExist = false;
+		
+		PreparedStatement query = 
+				connection.prepareStatement(DoleLoaderConstants.GET_PRODUCT_FOR_URL);
+		query.setString(1, productUrl);
+		ResultSet r = query.executeQuery();
+		if(r.next())
+		{
+			doesProductExist = true;
+		}
+		r.close();
+		query.close();
+		
+		return doesProductExist;
+	}
 	
 }

@@ -63,7 +63,7 @@ public class DBLoader {
 		try {
             // The newInstance() call is a work around for some
             // broken Java implementations
-			connection = DriverManager.getConnection("jdbc:mysql://localhost/dole_db?" +
+			connection = DriverManager.getConnection("jdbc:mysql://localhost/dole_2?" +
 				                                   "user=root&password=ima711");
 			System.out.println("DB Connection established...");
 		
@@ -89,9 +89,9 @@ public class DBLoader {
 				System.out.println("Step: " + task.get("name") + " DONE. ");
 			}
 			
-			excelFileLoader = new ExcelFileLoader();
+			/*excelFileLoader = new ExcelFileLoader();
 			excelFileLoader.processExcelFiles("/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Nutrition/nutritionLabels/", connection);
-			
+			*/
 			
         } catch (Exception ex) {
             // handle the error

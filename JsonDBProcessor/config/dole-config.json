@@ -4,6 +4,13 @@
 			
 			
 			{
+				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/Dole.com/press-releases-1223.json",
+				"mapper":"com.enavigo.doleloader.mapper.DoleDotComPressReleaseMapper",
+				"name": "Dole.com Press Releases",
+				"source-site": "d",
+				"persistor": "com.enavigo.doleloader.persistence.DolePressReleasePersistor"
+			},
+			{
 				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/newsletter.dole.com/newsletter-dole-recipes-150501.json",
 				"mapper":"com.enavigo.doleloader.mapper.NewsletterRecipeMapper",
 				"name": "Newsletter Recipes",
@@ -86,7 +93,6 @@
 				"source-site": "s",
 				"persistor": "com.enavigo.doleloader.persistence.DoleProductPersistor"
 			}
-			
 			
 			 
 			
