@@ -206,11 +206,36 @@ public class DoleLoaderConstants {
 	public static String GET_RELEASE_FOR_URL = 
 			"SELECT release_id FROM press_release WHERE url = ?";
 	
+	public static String GET_PAGE_FOR_URL = 
+			"SELECT page_url FROM crs_page WHERE page_url = ?";
+	
 	public static String INSERT_PRESS_RELEASE = 
 			"INSERT INTO press_release (release_id, title, url, body_html, body_text, publish_date, source_site_id) "
 			+ " VALUES "
 			+ " (?, ?, ?, ?, ?, ?, ?)";
 	
+	public static String CRS_CATEGORY_PAGE_INSERT = 
+			"INSERT INTO crs_category_page (cat_page_id, title, header_image_url, body_html," +
+					"body_text, page_url)" +
+					"VALUES (" + 
+					"?, ?, ?, ?, ?, ?)";
 	
+	public static String CRS_SUBCATEGORY_PAGE_INSERT = 
+			"INSERT INTO crs_subcategory_page (crs_subcategory_id, title, header_image_url, body_html," +
+					"body_text, page_url, parent_category_id)" +
+					"VALUES (" + 
+					"?, ?, ?, ?, ?, ?, ?)";
+	
+	public static String CRS_TERTIARY_PAGE_INSERT = 
+			"INSERT INTO crs_tertiary_page (crs_tertiary_page_id, title, header_image_url, body_html," +
+					"body_text, page_url, parent_subcategory_id)" +
+					"VALUES (" + 
+					"?, ?, ?, ?, ?, ?, ?)";
+	
+	public static String CRS_PAGE_INSERT = 
+			"INSERT INTO crs_page (page_id, title, header_image_url, body_html," +
+					"body_text, page_url, parent_page_id)" +
+					"VALUES (" + 
+					"?, ?, ?, ?, ?, ?, ?)";
 	
 }
