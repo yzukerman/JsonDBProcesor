@@ -2,11 +2,11 @@
 	"tasks":
 		[
 			{
-				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/Dole CRS/dole-crs-no-press-151128.json",
-				"mapper":"com.enavigo.doleloader.mapper.DoleCrsPageMapper",
-				"name": "DoleCrs.com PageMapper",
+				"source-file":"/Users/yuvalzukerman/Dropbox/Enavigo/Clients/Dole/Extracts/Dole CRS/dole-crs-press-releases.json",
+				"mapper":"com.enavigo.doleloader.mapper.DoleCrsPressReleaseMapper",
+				"name": "DoleCrs.com Press Release Mapper",
 				"source-site": "q",
-				"persistor": "com.enavigo.doleloader.persistence.DoleCrsPagePersistor"
+				"persistor": "com.enavigo.doleloader.persistence.DoleCrsPressReleasePersistor"
 			}
 		]
 }
